@@ -1,5 +1,5 @@
 # Logs
-actions.log.json
+*.flag.txt
 logs
 *.log
 npm-debug.log*

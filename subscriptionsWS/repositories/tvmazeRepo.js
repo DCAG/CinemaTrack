@@ -1,14 +1,14 @@
 const axios = require('axios')
 
-REPLACE_ME_URL = "https://SOME_REPLACE_ME_URL/"
+const MOVIES_URL = "https://api.tvmaze.com/shows"
 
 const getAll = async () => {
-    const {data} = await axios.get(REPLACE_ME_URL)
+    const {data} = await axios.get(MOVIES_URL)
     return data
 }
 
 const getById = async (id) => {
-    const {data} = await axios.get(`${REPLACE_ME_URL}/${id}`)
+    const {data} = await axios.get(`${MOVIES_URL}/${id}`)
     return data
 }
 
