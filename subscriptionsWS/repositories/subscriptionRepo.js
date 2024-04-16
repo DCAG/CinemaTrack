@@ -1,23 +1,25 @@
-const REPLACE_MEs = require('../models/REPLACE_MEsModel')
+const subscription = require('../models/subscriptionModel')
+const member = require('../models/memberModel')
+const movie = require('../models/movieModel')
 
 const getAll = () => {
-    return REPLACE_MEs.find().populate('temp1').populate('temp2').exec()
+    return subscription.find().populate('memberId').populate('movies.movie').exec()
 }
 
 const getById = (id) => {
-    return REPLACE_MEs.findById(id).populate('temp1').populate('temp2').exec()
+    return subscription.findById(id).populate('memberId').populate('movies.movie').exec()
 }
 
-const update = (id,REPLACE_ME) => {
-    return REPLACE_MEs.findByIdAndUpdate(id,REPLACE_ME)
+const update = (id,object) => {
+    return subscription.findByIdAndUpdate(id,object)
 }
 
-const create = (REPLACE_ME) => {
-    return REPLACE_MEs.create(REPLACE_ME)
+const create = (object) => {
+    return subscription.create(object)
 }
 
 const remove = (id) => {
-    return REPLACE_MEs.findByIdAndDelete(id)
+    return subscription.findByIdAndDelete(id)
 }
 
 

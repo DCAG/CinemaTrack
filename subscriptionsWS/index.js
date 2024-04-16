@@ -6,7 +6,9 @@ const loadExternalData = require('./bin/loadData')
 const express = require('express')
 const cors = require('cors')
 // controllers
-//const REPLACE_MEController = require('./controllers/REPLACE_MEController')
+const subscriptionController = require('./controllers/subscriptionController')
+const movieController = require('./controllers/movieController')
+const memberController = require('./controllers/memberController')
 
 connectDB()
 loadExternalData()
@@ -15,7 +17,9 @@ const app = express()
  
 app.use(cors())
 app.use(express.json())
-//app.use('/REPLACE_ME', REPLACE_MEController);
+app.use('/subscription', subscriptionController);
+app.use('/movie', movieController);
+app.use('/member', memberController);
 
 const PORT = 3000
 app.listen(PORT,()=>{
