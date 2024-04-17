@@ -1,6 +1,6 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
-const REPLACE_MEService = require('../services/REPLACE_MEService')
+const usersService = require('../services/usersService')
 
 const router = express.Router()
 
@@ -8,10 +8,10 @@ const router = express.Router()
 router.post('/login', async (req,res) => {
     const {username, password} = req.body
 
-    console.log("location[/auth/login]")
+    console.log("location[/auth/login]") 
 
     if(await usersService.verifyCredentials(username, password)){
-        const user = (await REPLACE_MEService.get(username))
+        const user = (await usersService.getByUsername(username))
         console.log("location[/auth/login]/user.id", user.id)
         const JWT_SECRET = process.env.JWT_SECRET
         const token = jwt.sign(

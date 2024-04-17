@@ -1,0 +1,15 @@
+[
+    {
+        "userId":"661fdef470d2fa53a3c773c9",
+        "permissions":[
+            "View Subscriptions",
+            "Create Subscriptions",
+            "Delete Subscriptions",
+            "Update Subscriptio",
+            "View Movies",
+            "Create Movies",
+            "Delete Movies",
+            "Update Movie"
+        ]
+    }
+]
