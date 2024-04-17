@@ -1,6 +1,4 @@
 const subscription = require('../models/subscriptionModel')
-const member = require('../models/memberModel')
-const movie = require('../models/movieModel')
 
 const getAll = () => {
     return subscription.find().populate('memberId').populate('movies.movie').exec()

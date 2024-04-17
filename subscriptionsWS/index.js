@@ -17,9 +17,9 @@ const app = express()
  
 app.use(cors())
 app.use(express.json())
-app.use('/subscription', subscriptionController);
-app.use('/movie', movieController);
-app.use('/member', memberController);
+app.use('/subscriptions', subscriptionController);
+app.use('/movies', movieController);
+app.use('/members', memberController);
 
 const PORT = 3000
 app.listen(PORT,()=>{
