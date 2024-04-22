@@ -1,6 +1,6 @@
 const usersCollRepo = require('../repositories/usersCollRepo')
-const permissionsFileRepo = require('../repositories/permissionsFileRepo')
 const usersFileRepo = require('../repositories/usersFileRepo')
+const permissionsFileRepo = require('../repositories/permissionsFileRepo')
 
 const getAll = async () => {
     const data = await Promise.all([

@@ -5,6 +5,6 @@
         "lastName": "admin",
         "createdDate": "1970-01-01",
         "username": "admin",
-        "sessionTimeOut": 20
+        "sessionTimeout": 20
     }
 ]
