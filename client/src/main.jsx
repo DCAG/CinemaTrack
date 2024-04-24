@@ -5,7 +5,7 @@ import './index.css'
 
 import { BrowserRouter } from 'react-router-dom'
 import {legacy_createStore as createStore} from 'redux'
-import { Provider } from 'react-redux'
+import { Provider, useDispatch } from 'react-redux'
 
 import reducer from './redux/reducer.js'
 const store = createStore(reducer)

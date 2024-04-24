@@ -1,19 +1,19 @@
 import React from 'react'
 import { Outlet, Link } from 'react-router-dom'
 
-function UsersPage() {
+function MoviesPage() {
     return (
     <div>
         <h1>
-            Users
+            MoviesPage
         </h1>
         <nav>
             <ul>
                 <li>
-                    <Link to='all'>All Users</Link>
+                    <Link to='.'>All Movies</Link>
                 </li>
                 <li>
-                    <Link to='add'>Add User</Link>
+                    <Link to='add'>Add Movie</Link>
                 </li>
             </ul>
         </nav>
@@ -22,4 +22,4 @@ function UsersPage() {
     )
 }
 
-export default UsersPage
+export default MoviesPage

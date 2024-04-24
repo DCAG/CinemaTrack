@@ -13,26 +13,26 @@ function MainPage() {
     return (
     <div>
         <h1>
-            Cinemall
+            CinemaTrack
         </h1>
         <h2>
         Movies Subscriptions Management App
         </h2>
-        <nav>
-            <ul>
-                <li>
+        <nav style={{display:'inline-block'}}>
+            <ul style={{listStyle:'none'}}>
+                <li style={{display:'inline-block', padding:'2px'}}>
                     Hello {sessionStorage['firstName']}!
                 </li>
-                <li>
+                <li style={{display:'inline-block', padding:'2px'}}>
                     <Link to='movies'>Movies</Link>
                 </li>
-                <li>
+                <li style={{display:'inline-block', padding:'2px'}}>
                     <Link to='subscriptions'>Subscriptions</Link>
                 </li>
-                <li style={sessionStorage['isAdmin']??{visibility:'hidden'}}>
+                <li style={!sessionStorage['isAdmin']?{visibility:'hidden',display:'none'}:{display:'inline-block', padding:'2px'}}>
                     <Link to='users'>Users Management</Link>
                 </li>
-                <li>
+                <li style={{display:'inline-block', padding:'2px'}}>
                     <button onClick={handleLogout}>Logout</button>
                 </li>
             </ul>

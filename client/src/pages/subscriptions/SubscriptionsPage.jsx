@@ -5,8 +5,10 @@ function SubscriptionsPage() {
     return (
     <div>
         <h1>
-            SubscriptionsPage
+            Subscriptions
         </h1>
+        <Link to='.'>All Members</Link>
+        <Link to='add'>Add Member</Link>
         <Outlet />
     </div>
     )
