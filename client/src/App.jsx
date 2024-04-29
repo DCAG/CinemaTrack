@@ -19,16 +19,7 @@ import AddUserPage from './pages/users/AddUserPage'
 import EditUserPage from './pages/users/EditUserPage'
 import AllUsersPage from './pages/users/AllUsersPage'
 
-import { fetchData } from './utils/init.js'
-import { useDispatch } from 'react-redux'
-import { useEffect } from 'react'
-
 function App() {
-  const dispatch = useDispatch()
-  useEffect(() => {
-    fetchData(dispatch)
-  },[])
-
   return (
     <>
       <Routes>

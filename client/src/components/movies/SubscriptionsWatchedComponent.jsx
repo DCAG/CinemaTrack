@@ -9,7 +9,7 @@ function SubscriptionsWatchedComponent({subscriptions}) {
       <br />
       <ul>
         {
-          subscriptions.map(sub => {
+          subscriptions?.map(sub => {
             return (
               <li key={sub.id}>
                 <Link to={`/subscriptions/:${sub.id}`}>{sub.fullName}</Link>

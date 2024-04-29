@@ -1,7 +1,7 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-
+import { movieCreate } from '../../redux/reducer'
 function AddMoviePage() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -9,22 +9,25 @@ function AddMoviePage() {
     const handleChange = (e) => {
         let name = e.target.name
         let value = e.target.value
+        if(name==='genres'){
+            value = value.split(',').map(v=>v.trim())
+        }
         setMovie(previous => {return {...previous, [name]: value}})
     }
     const handleSave = () => {
-        dispatch({type:'MOVIE_CREATE', payload:movie})
-        navigate('/movies/all')
+        dispatch(movieCreate(movie))
+        navigate('../')
     }
 
     const handleCancel = () => {
-        navigate('/movies/all')
+        navigate('../')
     }
     return (
     <div>
-        Name: <input type="text" name="name" value={movie.name} onChange={handleChange} /> <br />
-        Genres: <input type="text" name="genres" value={movie.genres.split(',')} onChange={handleChange} /> <br />
-        Image URL: <input type="url" name="image" value={movie.image} onChange={handleChange} /> <br />
-        Premiered: <input type="date" name="premiered" value={premiered} onChange={handleChange} /> <br />
+        Name: <input type="text" name="name" onChange={handleChange} /> <br />
+        Genres: <input type="text" name="genres" onChange={handleChange} /> <br />
+        Image URL: <input type="url" name="image" onChange={handleChange} /> <br />
+        Premiered: <input type="date" name="premiered" onChange={handleChange} /> <br />
         <button onClick={handleSave}>save</button>
         <button onClick={handleCancel}>cancel</button>
     </div>

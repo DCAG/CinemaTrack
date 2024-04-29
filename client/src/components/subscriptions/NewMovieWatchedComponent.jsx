@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 
 function NewMovieWatchedComponent({watched}) {
+  const movies = useSelector(store => store.movies.map(movie=>({name:movie.name, _id:movie._id})), shallowEqual)
   const [subscription, setSubscription] = useState({movie: '', date: ''})
   const handleChange = (e) => {
     let name = e.target.name
@@ -13,16 +15,19 @@ function NewMovieWatchedComponent({watched}) {
   return (
     <div>
         <h3>Add a new movie</h3>
-        <select name="movie" value={subscription.movieId} onChange={handleChange}>
+        <select name="movie" onChange={handleChange}>
           {
-            movies.filter(movie => !watched.includes(movie.id)).map(movie => {
+            movies
+            ?.filter(movie => !watched?.includes(movie._id))
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(movie => {
                 return (
-                    <option value={movie.id}>{movie.name}</option>
+                    <option key={movie._id} value={movie._id}>{movie.name}</option>
                 )
             })
           }
         </select>
-        <input type="date" name="date" onChange={handleChange} />
+        <input type="date" name="date" value={(new Date()).toISOString().replace(/T.*Z$/,'')} onChange={handleChange} /> <br />
         <button onClick={handleSubscribe}>Subscribe</button>
     </div>
   )

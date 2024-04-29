@@ -1,18 +1,19 @@
 import React from 'react'
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 
 function MoviesPage() {
+    const location = useLocation()
     return (
     <div>
         <h1>
             MoviesPage
         </h1>
-        <nav>
+        <nav className='main-nav'>
             <ul>
-                <li>
+                <li className={location.pathname.endsWith('movies')?'selected-link':''}>
                     <Link to='.'>All Movies</Link>
                 </li>
-                <li>
+                <li className={location.pathname.endsWith('add')?'selected-link':''}>
                     <Link to='add'>Add Movie</Link>
                 </li>
             </ul>

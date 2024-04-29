@@ -76,8 +76,7 @@ function AddUserPage() {
         Username: <input type="text" name="username" value={user?.username} onChange={handleChange} /> <br />
         Session Timeout (Minutes): <input type="number" name="sessionTimeout" value={user?.sessionTimeout} onChange={handleChange} /> <br />
         Permissions: <br />
-        {/* TODO: move style to css file */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+        <div className='permissions'>
         {
             Object.keys(permissions).map(item => {
                 return (

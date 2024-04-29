@@ -1,18 +1,20 @@
 import React from 'react'
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 
 function UsersPage() {
+    const location = useLocation()
+
     return (
     <div>
         <h1>
             Users
         </h1>
-        <nav style={{display:'inline-block'}}>
-            <ul style={{listStyle:'none'}}>
-                <li style={{display:'inline-block', padding:'2px'}}>
+        <nav className='main-nav'>
+            <ul>
+                <li className={location.pathname.endsWith('users')?'selected-link':''}>
                     <Link to='.'>All Users</Link>
                 </li>
-                <li style={{display:'inline-block', padding:'2px'}}>
+                <li className={location.pathname.endsWith('add')?'selected-link':''}>
                     <Link to='add'>Add User</Link>
                 </li>
             </ul>

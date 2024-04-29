@@ -1,4 +1,6 @@
-import React from 'react'
+import React,{useState} from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 
 function AddMemberPage() {
     const navigate = useNavigate()
@@ -13,7 +15,7 @@ function AddMemberPage() {
         dispatch({type:'MEMBER_CREATE', payload:member})
     }
     const handleCancel = () => {
-        navigate('all')
+        navigate('../')
     }
     return (
     <div>
@@ -21,9 +23,9 @@ function AddMemberPage() {
             Add New Member
         </h1>
         <br />
-        Name: <input type="text" value={member.name} onChange={handleChange} /> <br />
-        Email: <input type="text" value={member.email} onChange={handleChange} /> <br />
-        City: <input type="text" value={member.city} onChange={handleChange} /> <br />
+        Name: <input type="text" onChange={handleChange} /> <br />
+        Email: <input type="text" onChange={handleChange} /> <br />
+        City: <input type="text" onChange={handleChange} /> <br />
         <br />
         <button onClick={handleSave}>save</button>
         <button onClick={handleCancel}>cancel</button>

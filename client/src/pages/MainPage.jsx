@@ -18,21 +18,23 @@ function MainPage() {
         <h2>
         Movies Subscriptions Management App
         </h2>
-        <nav style={{display:'inline-block'}}>
-            <ul style={{listStyle:'none'}}>
-                <li style={{display:'inline-block', padding:'2px'}}>
+        <nav className='main-nav'>
+            <ul>
+                <li>
                     Hello {sessionStorage['firstName']}!
                 </li>
-                <li style={{display:'inline-block', padding:'2px'}}>
+                <li className={location.pathname.includes('movies')?'selected-link':''}>
                     <Link to='movies'>Movies</Link>
                 </li>
-                <li style={{display:'inline-block', padding:'2px'}}>
+                <li className={location.pathname.includes('subscriptions')?'selected-link':''}>
                     <Link to='subscriptions'>Subscriptions</Link>
                 </li>
-                <li style={!sessionStorage['isAdmin']?{visibility:'hidden',display:'none'}:{display:'inline-block', padding:'2px'}}>
+                <li  className={location.pathname.includes('users')?'selected-link':''}
+                // style={!sessionStorage['isAdmin']?{visibility:'hidden',display:'none'}:{}}
+                >
                     <Link to='users'>Users Management</Link>
                 </li>
-                <li style={{display:'inline-block', padding:'2px'}}>
+                <li>
                     <button onClick={handleLogout}>Logout</button>
                 </li>
             </ul>

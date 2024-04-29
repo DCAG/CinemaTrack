@@ -4,17 +4,19 @@ import App from './App.jsx'
 import './index.css'
 
 import { BrowserRouter } from 'react-router-dom'
-import {legacy_createStore as createStore} from 'redux'
-import { Provider, useDispatch } from 'react-redux'
+import { Provider } from 'react-redux'
 
-import reducer from './redux/reducer.js'
-const store = createStore(reducer)
+//TODO: Move the fetching of initial data after login (or retry after so if the user is already logged in it will work as well)
+import store from './redux/store.js'
+import {fetchMovies, fetchMembers} from './redux/reducer.js'
+store.dispatch(fetchMovies)
+store.dispatch(fetchMembers)
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <BrowserRouter>
+  <BrowserRouter>
+    <Provider store={store}>
       <App />
-    </BrowserRouter>
-  </Provider>
+    </Provider>
+  </BrowserRouter>
   ,
 )

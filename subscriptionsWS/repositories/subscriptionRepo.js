@@ -1,11 +1,11 @@
 const subscription = require('../models/subscriptionModel')
 
 const getAll = () => {
-    return subscription.find().populate('memberId').populate('movies.movie').exec()
+    return subscription.find()
 }
 
 const getById = (id) => {
-    return subscription.findById(id).populate('memberId').populate('movies.movie').exec()
+    return subscription.findById(id)
 }
 
 const update = (id,object) => {

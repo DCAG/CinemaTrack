@@ -79,8 +79,7 @@ function EditUserPage() {
         Session Timeout (Minutes): <input type="number" name="sessionTimeout" value={user?.sessionTimeout} onChange={handleChange} /> <br />
         Created Date: {user?.createdDate} <br />
         Permissions: <br />
-        {/* TODO: move style to css file */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+        <div className='permissions'>
         {
             Object.keys(permissions).map(item => {
                 return (
