@@ -1,10 +1,1 @@
-[
-    {
-        "id": "661fdef470d2fa53a3c773c9",
-        "firstName": "admin",
-        "lastName": "admin",
-        "createdDate": "1970-01-01",
-        "username": "admin",
-        "sessionTimeout": 20
-    }
-]
+[{"id":"661fdef470d2fa53a3c773c9","firstName":"admin","lastName":"admin","createdDate":"1970-01-01","username":"admin","sessionTimeout":20},{"id":"6630faca81cfc26c01979f89","firstName":"Amir","lastName":"Granot","createdDate":"2024-04-30","username":"amirgra","sessionTimeout":60},{"id":"6630fcb656c29c448ee036c2","firstName":"Dafna","lastName":"Friedmann","createdDate":"2024-04-30","username":"dafnafrie","sessionTimeout":60}]
