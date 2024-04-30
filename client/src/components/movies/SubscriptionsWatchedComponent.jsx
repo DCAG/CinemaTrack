@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { HashLink } from 'react-router-hash-link'
 
 function SubscriptionsWatchedComponent({subscriptions}) {
   return (
@@ -15,9 +16,9 @@ function SubscriptionsWatchedComponent({subscriptions}) {
                 {/*
                 NOTE:
                 Instruction: ...click on the Subscriber link will redirect to the “Member” page...
-                Interpretation: There is no "Member Page", so its either "EditMember Page" or present the member in "All Members Page". I chose the 2nd option.
+                Interpretation: There is no "Member Page", so its either "EditMember Page" or present the member in "All Members Page". I chose the 2nd option with scrolling to member location.
                  */}
-                <Link to={`/main/subscriptions/#${sub.member._id}`}>{sub.member.name}</Link>
+                <HashLink smooth to={`/main/subscriptions/#${sub.member._id}`}>{sub.member.name}</HashLink>
                 {', ' + sub.date.replace(/T.*Z$/,'')}
               </li>
             )
