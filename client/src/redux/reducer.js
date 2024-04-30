@@ -7,6 +7,7 @@ var initialState = {
     movies: [],
     members: [],
     users: [],
+    subscriptions: [],
     status: 'idle', // loading
     error: null
 }
@@ -29,20 +30,38 @@ export const rootReducer = (state = initialState, action) => {
           return {...state, movies: movies} 
         case 'MOVIE_DELETED':
           return {...state, movies: state.movies.filter(movie => movie._id !== action.payload)};
-        case 'SUB_CREATE':
-            return state;
-        case 'SUB_DELETE':
-            return state;
+        case 'SUB_LOADING':
+          return {...state, status: 'loading'}
+        case 'SUB_LOADED':
+          return {...state, status: 'idle', subscriptions: action.payload}
+        case 'SUB_CREATED': // also updated (sending: {movie,date,member} and getting {member,movies:[{movie,date}]})
+          const subscriptions = [...state.subscriptions];
+          const subsIndex = state.subscriptions.findIndex(sub => { return sub._id == action.payload._id });
+          if(subsIndex == -1){
+            // if didn't exist before
+            subscriptions.push(action.payload)
+          }
+          else{
+            // if existed, then the subscription object updated - replace it
+            subscriptions[subsIndex] = action.payload
+          }
+          return {...state, subscriptions}
+        case 'SUB_DELETED':
+          // delete the entire subscriptions of a specific user (subscription object in the DB {id,member,movies:[{movie,date}]})
+          return {...state, subscriptions: state.subscriptions.filter(sub => sub._id !== action.payload)};
         case 'MEMBERS_LOADING':
           return {...state, status: 'loading'}
         case 'MEMBERS_LOADED':
           return {...state, status: 'idle', members: action.payload}
-        case 'MEMBER_CREATE':
-        return state;
-        case 'MEMBER_UPDATE':
-            return state;
-        case 'MEMBER_DELETE':
-            return state;
+        case 'MEMBER_CREATED':
+          return { ...state, members: [...state.members, action.payload]};
+        case 'MEMBER_UPDATED':
+          const members = [...state.members];
+          const memberIndex = state.members.findIndex(member => { return member._id == action.payload._id });
+          movies[memberIndex] = action.payload
+          return {...state, members: members} 
+        case 'MEMBER_DELETED':
+          return {...state, members: state.members.filter(member => member._id !== action.payload)};
         case 'USERS_LOADING':
           return {...state, status: 'loading'}
         case 'USERS_LOADED':
@@ -73,6 +92,9 @@ export const movieDeleted = (id) => ({ type: 'MOVIE_DELETED', payload: id })
 
 export const membersLoaded = (payload) => ({ type: 'MEMBERS_LOADED', payload: payload })
 export const membersLoading = () => ({ type: 'MEMBERS_LOADING' })
+export const memberUpdated = (member) => ({ type: 'MEMBER_UPDATED', payload: member })
+export const memberCreated = (member) => ({ type: 'MEMBER_CREATED', payload: member })
+export const memberDeleted = (id) => ({ type: 'MEMBER_DELETED', payload: id })
 
 export const usersLoaded = (payload) => ({ type: 'USERS_LOADED', payload: payload })
 export const usersLoading = () => ({ type: 'USERS_LOADING' })
@@ -80,7 +102,57 @@ export const userUpdated = (user) => ({ type: 'USER_UPDATED', payload: user })
 export const userCreated = (user) => ({ type: 'USER_CREATED', payload: user })
 export const userDeleted = (id) => ({ type: 'USER_DELETED', payload: id })
 
+export const subscriptionsLoaded = (payload) => ({ type: 'SUB_LOADED', payload: payload })
+export const subscriptionsLoading = () => ({ type: 'SUB_LOADING' })
+export const subscriptionCreated = (subscription) => ({ type: 'SUB_CREATED', payload: subscription })
+export const subscriptionDeleted = (id) => ({ type: 'SUB_DELETED', payload: id })
+
 // Thunk Function
+export function subscriptionDelete(id) {
+  return async (dispatch, getState) => {
+    try{
+      const {data} = await axios.delete(CINEMA_BASE_URL + '/subscriptions/' + id)
+      dispatch(subscriptionDeleted(data._id))
+    }
+    catch(error){
+      dispatch(fetchDataError(error))
+      const stateAfterError = getState()
+      console.log('[subscriptionDeleted] error: ', stateAfterError.error)
+    }
+  }
+}
+
+export function subscriptionCreate(subscription) {
+  return async (dispatch, getState) => {
+    try{
+      const {data} = await axios.post(CINEMA_BASE_URL + '/subscriptions/',subscription)
+      dispatch(subscriptionCreated(data))
+    }
+    catch(error){
+      dispatch(fetchDataError(error))
+      const stateAfterError = getState()
+      console.log('[subscriptionCreated] error: ', stateAfterError.error)
+    }
+  }
+}
+
+export async function fetchSubscriptions(dispatch, getState) {
+  try{
+    dispatch(subscriptionsLoading())
+    const stateBefore = getState()
+    console.log('Subscriptions before dispatch: ', stateBefore.subscriptions.length)
+    const {data} = await axios.get(CINEMA_BASE_URL + '/subscriptions')
+    dispatch(subscriptionsLoaded(data))
+    const stateAfter = getState()
+    console.log('Subscriptions after dispatch: ', stateAfter.subscriptions.length)
+  }
+  catch(error){
+    dispatch(fetchDataError(error))
+    const stateAfterError = getState()
+    console.log('[fetchSubscriptions] error: ', stateAfterError.error)
+  }
+}
+
 export function movieDelete(id) {
   return async (dispatch, getState) => {
     try{
@@ -139,6 +211,48 @@ export async function fetchMovies(dispatch, getState) {
     console.log('[fetchMovies] error: ', stateAfterError.error)
   }
 }
+
+export function memberDelete(id) {
+  return async (dispatch, getState) => {
+    try{
+      const {data} = await axios.delete(CINEMA_BASE_URL + '/members/' + id)
+      dispatch(memberDeleted(data._id))
+    }
+    catch(error){
+      dispatch(fetchDataError(error))
+      const stateAfterError = getState()
+      console.log('[memberDeleted] error: ', stateAfterError.error)
+    }
+  }
+}
+
+export function memberCreate(member) {
+  return async (dispatch, getState) => {
+    try{
+      const {data} = await axios.post(CINEMA_BASE_URL + '/members/',member)
+      dispatch(memberCreated(data))
+    }
+    catch(error){
+      dispatch(fetchDataError(error))
+      const stateAfterError = getState()
+      console.log('[memberCreated] error: ', stateAfterError.error)
+    }
+  }
+}
+
+export function memberUpdate(id, member) {
+  return async (dispatch, getState) => {
+    try{
+      const {data} = await axios.put(CINEMA_BASE_URL + '/members/' + id, member)
+      dispatch(memberUpdated(data))
+    }
+    catch(error){
+      dispatch(fetchDataError(error))
+      const stateAfterError = getState()
+      console.log('[memberUpdate] error: ', stateAfterError.error)
+    }
+  }
+} 
 
 export async function fetchMembers(dispatch, getState) {
   try{
@@ -220,6 +334,11 @@ export async function fetchUsers(dispatch, getState) {
 export const selectMoviesIdsNames = createSelector(
   state => state.movies,
   movies => movies.map(movie => ({ _id: movie._id, name: movie.name }))
+)
+
+export const selectMembersIdsNames = createSelector(
+  state => state.members,
+  members => members.map(member => member._id)
 )
 
 export default rootReducer

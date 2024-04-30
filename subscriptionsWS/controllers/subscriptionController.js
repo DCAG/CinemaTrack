@@ -16,7 +16,6 @@ router.get('/', async (req,res) => {
 
 router.get('/:id', async (req,res) => {
     try{
-
         const {id} = req.params
         const data = await subscriptionService.getById(id)
         res.send(data)
@@ -27,7 +26,19 @@ router.get('/:id', async (req,res) => {
     }
 })
 
-router.post('/create', async (req,res) => {
+router.get('/memberId/:id', async (req,res) => {
+    try{
+        const {id} = req.params
+        const data = await subscriptionService.getByMemberId(id)
+        res.send(data)
+    }
+    catch(err){
+        console.log(err)
+        res.send(err)
+    }
+})
+
+router.post('/', async (req,res) => {
     try{
         const body = req.body;
         const data = await subscriptionService.create(body)
@@ -35,7 +46,11 @@ router.post('/create', async (req,res) => {
     }
     catch(err){
         console.log(err)
-        res.send(err)
+        let statusCode = 400
+        if(err.name=="ValidationError" || err.code == 11000){
+            statusCode = 422
+        }
+        res.status(statusCode).send(err)
     }
 })
 

@@ -8,8 +8,12 @@ const getById = (id) => {
     return subscription.findById(id)
 }
 
+const getByMemberId = (id) => {
+    return subscription.findOne({member: id})
+}
+
 const update = (id,object) => {
-    return subscription.findByIdAndUpdate(id,object)
+    return subscription.findByIdAndUpdate(id,object,{new:true})
 }
 
 const create = (object) => {
@@ -21,4 +25,4 @@ const remove = (id) => {
 }
 
 
-module.exports = {getAll, getById, update, create, remove}
+module.exports = {getAll, getById, update, create, remove, getByMemberId}

@@ -8,6 +8,10 @@ const getById = (id) => {
     return subscriptionService.getById(id)
 }
 
+const getByMemberId = (id) => {
+    return subscriptionService.getByMemberId(id)
+}
+
 const update = (id,object) => {
     return subscriptionService.update(id,object)
 }
@@ -20,4 +24,4 @@ const remove = async (id) => {
     return subscriptionService.remove(id)
 }
 
-module.exports = {getAll, getById, create, update, remove}
+module.exports = {getAll, getById, create, update, remove, getByMemberId}
