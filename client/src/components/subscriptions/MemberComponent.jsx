@@ -11,14 +11,12 @@ function MemberComponent({id}) {
     navigate(id+'/edit')
   }
   const handleDelete = () => {
+    //FIXME
     navigate('.')
   }
   if(!member){
     return <div></div>
   }
-  // useEffect(() => {
-  //   console.log(member.subscriptions)
-  // },[member])
   return (
     <div className='member-component generic-form'>
         {/* anchor used to jump directly to member*/}
@@ -28,7 +26,7 @@ function MemberComponent({id}) {
         <button onClick={handleEdit}>Edit</button>
         <button onClick={handleDelete}>Delete</button>
         <br /><br />
-        <MoviesWatchedComponent subscriptions={member.subscriptions?.movies} />
+        <MoviesWatchedComponent memberId={id} subscriptions={member.subscriptions?.movies} />
     </div>
   )
 }
