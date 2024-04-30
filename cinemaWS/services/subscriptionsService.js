@@ -12,8 +12,23 @@ const update = (id,object) => {
     return subscriptionsRepo.update(id,object)
 }
 
-const create = (object) => {
-    return subscriptionsRepo.create(object)
+const create = async (object) => {
+    const {member, movie, date} = object
+    const memberSubs = await subscriptionsRepo.getByMemberId(member)
+    if(!memberSubs){
+        const initialSub = {
+            member,
+            movies: [{movie,date}]
+        }
+        return subscriptionsRepo.create(initialSub)
+    }
+
+    if(!memberSubs.movies.find(m=>m.movie._id==movie)){
+        memberSubs.movies.push({movie,date})
+        return subscriptionsRepo.update(memberSubs._id,memberSubs)
+    }
+
+    return memberSubs
 }
 
 const remove = async (id) => {

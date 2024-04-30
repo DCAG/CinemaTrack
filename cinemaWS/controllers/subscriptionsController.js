@@ -27,7 +27,7 @@ router.get('/:id', async (req,res) => {
     }
 })
 
-router.post('/create', async (req,res) => {
+router.post('/', async (req,res) => {
     try{
         const body = req.body;
         const result = await subscriptionsService.create(body)
@@ -35,7 +35,12 @@ router.post('/create', async (req,res) => {
     }
     catch(err){
         console.log(err)
-        res.send(err)
+        let statusCode = 400;
+        if(err.code === "ERR_BAD_REQUEST" && err.response){
+            statusCode = err.response.status
+            err = err.response.data
+        }
+        res.status(statusCode).send(err)
     }
 })
 
