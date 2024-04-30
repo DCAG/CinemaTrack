@@ -24,8 +24,8 @@ export const rootReducer = (state = initialState, action) => {
             return { ...state, movies: [...state.movies, action.payload]};
         case 'MOVIE_UPDATED':
           const movies = [...state.movies];
-          const index = state.movies.findIndex(movie => { return movie._id == action.payload._id });
-          movies[index] = action.payload
+          const movieIndex = state.movies.findIndex(movie => { return movie._id == action.payload._id });
+          movies[movieIndex] = action.payload
           return {...state, movies: movies} 
         case 'MOVIE_DELETED':
           return {...state, movies: state.movies.filter(movie => movie._id !== action.payload)};
@@ -43,12 +43,19 @@ export const rootReducer = (state = initialState, action) => {
             return state;
         case 'MEMBER_DELETE':
             return state;
-        case 'USER_CREATE':
-            return state;
-        case 'USER_UPDATE':
-            return state;
-        case 'USER_DELETE':
-            return state;
+        case 'USERS_LOADING':
+          return {...state, status: 'loading'}
+        case 'USERS_LOADED':
+          return {...state, status: 'idle', users: action.payload}
+        case 'USER_UPDATED':
+          const users = [...state.users];
+          const userIndex = state.users.findIndex(user => { return user._id == action.payload._id });
+          users[userIndex] = action.payload
+          return {...state, users: users} 
+        case 'USER_CREATED':
+            return { ...state, users: [...state.users, action.payload]};
+        case 'USER_DELETED':
+            return {...state, users: state.users.filter(user => user._id !== action.payload)};
         default:
             return state;
     }
@@ -66,6 +73,12 @@ export const movieDeleted = (id) => ({ type: 'MOVIE_DELETED', payload: id })
 
 export const membersLoaded = (payload) => ({ type: 'MEMBERS_LOADED', payload: payload })
 export const membersLoading = () => ({ type: 'MEMBERS_LOADING' })
+
+export const usersLoaded = (payload) => ({ type: 'USERS_LOADED', payload: payload })
+export const usersLoading = () => ({ type: 'USERS_LOADING' })
+export const userUpdated = (user) => ({ type: 'USER_UPDATED', payload: user })
+export const userCreated = (user) => ({ type: 'USER_CREATED', payload: user })
+export const userDeleted = (id) => ({ type: 'USER_DELETED', payload: id })
 
 // Thunk Function
 export function movieDelete(id) {
@@ -143,6 +156,66 @@ export async function fetchMembers(dispatch, getState) {
     console.log('[fetchMembers] error: ', stateAfterError.error)
   }
 }
+
+export function userDelete(id) {
+  return async (dispatch, getState) => {
+    try{
+      const {data} = await axios.delete(CINEMA_BASE_URL + '/users/' + id)
+      dispatch(userDeleted(data._id))
+    }
+    catch(error){
+      dispatch(fetchDataError(error))
+      const stateAfterError = getState()
+      console.log('[userDeleted] error: ', stateAfterError.error)
+    }
+  }
+}
+
+export function userCreate(user) {
+  return async (dispatch, getState) => {
+    try{
+      const {data} = await axios.post(CINEMA_BASE_URL + '/users/',user)
+      dispatch(userCreated(data))
+    }
+    catch(error){
+      dispatch(fetchDataError(error))
+      const stateAfterError = getState()
+      console.log('[userCreated] error: ', stateAfterError.error)
+    }
+  }
+}
+
+export function userUpdate(id, user) {
+  return async (dispatch, getState) => {
+    try{
+      const {data} = await axios.put(CINEMA_BASE_URL + '/users/' + id, user)
+      dispatch(userUpdated(data))
+    }
+    catch(error){
+      dispatch(fetchDataError(error))
+      const stateAfterError = getState()
+      console.log('[userUpdate] error: ', stateAfterError.error)
+    }
+  }
+}
+
+export async function fetchUsers(dispatch, getState) {
+  try{
+    dispatch(usersLoading())
+    const stateBefore = getState()
+    console.log('Users before dispatch: ', stateBefore.users.length)
+    const {data} = await axios.get(CINEMA_BASE_URL + '/users')
+    dispatch(usersLoaded(data))
+    const stateAfter = getState()
+    console.log('Users after dispatch: ', stateAfter.users.length)
+  }
+  catch(error){
+    dispatch(fetchDataError(error))
+    const stateAfterError = getState()
+    console.log('[fetchUsers] error: ', stateAfterError.error)
+  }
+}
+
 // Memoized selectors
 export const selectMoviesIdsNames = createSelector(
   state => state.movies,

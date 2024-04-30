@@ -18,14 +18,14 @@ function AddMemberPage() {
         navigate('../')
     }
     return (
-    <div>
+    <div className='generic-form'>
         <h1>
             Add New Member
         </h1>
         <br />
-        Name: <input type="text" onChange={handleChange} /> <br />
-        Email: <input type="text" onChange={handleChange} /> <br />
-        City: <input type="text" onChange={handleChange} /> <br />
+        <label>Name:</label> <input type="text" onChange={handleChange} /> <br />
+        <label>Email:</label> <input type="text" onChange={handleChange} /> <br />
+        <label>City:</label> <input type="text" onChange={handleChange} /> <br />
         <br />
         <button onClick={handleSave}>save</button>
         <button onClick={handleCancel}>cancel</button>

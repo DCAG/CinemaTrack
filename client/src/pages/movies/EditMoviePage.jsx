@@ -30,14 +30,14 @@ function EditMoviePage() {
     },[movieObj])
 
     return (
-    <div>
+    <div className='generic-form'>
         <h1>
             Edit Movie: {movie.name}
         </h1>
-        Name: <input type="text" name="name" value={movie.name} onChange={handleChange} /> <br />
-        Genres: <input type="text" name="genres" value={movie.genres.join(', ')} onChange={handleChange} /> <br />
-        Image URL: <input type="url" name="image" value={movie.image} onChange={handleChange} /> <br />
-        Premiered: <input type="date" name="premiered" value={movie.premiered.replace(/T.+Z$/,'')} onChange={handleChange} /> <br />
+        <label>Name:</label> <input type="text" name="name" value={movie.name} onChange={handleChange} /> <br />
+        <label>Genres:</label> <input type="text" name="genres" value={movie.genres.join(', ')} onChange={handleChange} /> <br />
+        <label>Image URL:</label> <input type="url" name="image" value={movie.image} onChange={handleChange} /> <br />
+        <label>Premiered:</label> <input type="date" name="premiered" value={movie.premiered.replace(/T.+Z$/,'')} onChange={handleChange} /> <br />
         <button onClick={handleUpdate}>update</button>
         <button onClick={handleCancel}>cancel</button>
     </div>

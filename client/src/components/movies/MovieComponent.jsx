@@ -22,10 +22,10 @@ function MovieComponent({id}) {
   }
 
   return (
-    <div>
-      <h2>
+    <div className='movie-component'>
+      <h3>
           {movie.name + ', ' + (new Date(movie.premiered)).getFullYear()}
-      </h2>
+      </h3>
       genres: {movie.genres ? '"' + movie.genres.join('","') + '"':''}
       <br />
       <img src={movie.image} alt={movie.name + " image"} />

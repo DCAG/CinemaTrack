@@ -8,7 +8,7 @@ function MemberComponent({id}) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const handleEdit = () => {
-    navigate('edit')
+    navigate(id+'/edit')
   }
   const handleDelete = () => {
     navigate('.')
@@ -20,14 +20,14 @@ function MemberComponent({id}) {
   //   console.log(member.subscriptions)
   // },[member])
   return (
-    <div>
-        <h1>{member.fullName}</h1>
-        <br />
-        Email: {member.email} <br />
-        City: {member.city} <br />
+    <div className='member-component generic-form'>
+        {/* anchor used to jump directly to member*/}
+        <a id={id}><h3>{member.name}</h3></a>
+        <label>Email:</label> {member.email} <br />
+        <label>City:</label> {member.city} <br />
         <button onClick={handleEdit}>Edit</button>
         <button onClick={handleDelete}>Delete</button>
-        <br />
+        <br /><br />
         <MoviesWatchedComponent subscriptions={member.subscriptions?.movies} />
     </div>
   )

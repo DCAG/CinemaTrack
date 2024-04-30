@@ -17,6 +17,10 @@ img{
   padding-left: 0px;
 }
 
+.main-nav ul > * {
+  vertical-align: middle;
+}
+
 .main-nav ul>li {
   display: inline-block;
   padding: 2px;
@@ -54,8 +58,91 @@ img{
 }
 
 .selected-link a {
-  /*TODO: fix inheritence with correct classes. !important is not best practice*/
+  /*TODO: fix inheritence with correct classes order. !important is not best practice*/
   background-color: yellow !important;
+}
+
+.generic-form > label {
+  width: 81px;
+  display: inline-block;
+}
+
+.newmoviesub-component {
+  border-color: red;
+  border-style: solid;
+  border-width: 2px;
+  width: 250px;
+  margin: 2px 0px;
+  padding: 20px 0px;
+}
+
+.newmoviesub-component h3 {
+  margin: 0px;
+}
+
+.newmoviesub-component > * {
+  margin: 2px;
+  border-width: 2px;
+}
+
+.movieswatched-component {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+  width: 260px;
+  margin-bottom: 10px;
+}
+
+.movieswatched-component h3 {
+  margin: 0px;
+}
+
+.member-component {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+  width: 270px;
+  margin-top: 5px;
+}
+
+.main-pages {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.movie-component {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+  width: 400px;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+}
+
+.movie-component h3 {
+  margin: 0px;
+}
+
+.movie-component img {
+  width: 100px;
+  display: inline-block;
+  vertical-align: top;
+  padding: 5px;
+}
+
+.subscriptionswatched-component {
+  display: inline-block;
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+  width: 250px;
+  vertical-align: top;
+  margin-top: 5px;
+}
+
+.subscriptionswatched-component h4 {
+  margin: 0px;
 }
 
 /* LOADER WHELL */

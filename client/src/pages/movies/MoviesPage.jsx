@@ -4,7 +4,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 function MoviesPage() {
     const location = useLocation()
     return (
-    <div>
+    <div className='main-pages'>
         <h1>
             MoviesPage
         </h1>

@@ -13,9 +13,9 @@ function NewMovieWatchedComponent({watched}) {
 
   }
   return (
-    <div>
+    <div className='newmoviesub-component'>
         <h3>Add a new movie</h3>
-        <select name="movie" onChange={handleChange}>
+        <select name="movie" onChange={handleChange} style={{maxWidth:'100px'}}>
           {
             movies
             ?.filter(movie => !watched?.includes(movie._id))
@@ -27,7 +27,7 @@ function NewMovieWatchedComponent({watched}) {
             })
           }
         </select>
-        <input type="date" name="date" value={(new Date()).toISOString().replace(/T.*Z$/,'')} onChange={handleChange} /> <br />
+        <input type="date" name="date" value={(new Date()).toISOString().replace(/T.*Z$/,'')} onChange={handleChange} style={{maxWidth:'100px'}}/> <br />
         <button onClick={handleSubscribe}>Subscribe</button>
     </div>
   )

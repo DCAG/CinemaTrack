@@ -10,8 +10,8 @@ function MoviesWatchedComponent({subscriptions}) {
     console.log(subscriptions?.map(sub=>sub.movie._id))
   },[])
   return (
-    <div>
-        <h2>Movies Watched</h2>
+    <div className='movieswatched-component'>
+        <h3>Movies Watched</h3>
         <button onClick={handleSubscribe}>Subscribe to new movie</button>
         <br />
         <div style={!showDialog?{display:'none'}:{}}>

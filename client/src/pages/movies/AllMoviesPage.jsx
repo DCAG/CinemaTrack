@@ -28,6 +28,7 @@ function AllMoviesPage() {
 
   return (
   <div>
+    {/* TODO: move the find form to the moviesPage and pass a parameter so the results will be based on the parameter */}
     <form id="findForm" onSubmit={handleClick}>
       Find A Movie: <input type="text" name="findText" autoFocus={true} />
       <input type="submit" value="Find" />

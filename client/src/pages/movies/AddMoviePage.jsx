@@ -23,11 +23,11 @@ function AddMoviePage() {
         navigate('../')
     }
     return (
-    <div>
-        Name: <input type="text" name="name" onChange={handleChange} /> <br />
-        Genres: <input type="text" name="genres" onChange={handleChange} /> <br />
-        Image URL: <input type="url" name="image" onChange={handleChange} /> <br />
-        Premiered: <input type="date" name="premiered" onChange={handleChange} /> <br />
+    <div className='generic-form'>
+        <label>Name:</label> <input type="text" name="name" onChange={handleChange} /> <br />
+        <label>Genres:</label> <input type="text" name="genres" onChange={handleChange} /> <br />
+        <label>Image URL:</label> <input type="url" name="image" onChange={handleChange} /> <br />
+        <label>Premiered:</label> <input type="date" name="premiered" onChange={handleChange} /> <br />
         <button onClick={handleSave}>save</button>
         <button onClick={handleCancel}>cancel</button>
     </div>

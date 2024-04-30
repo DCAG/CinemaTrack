@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+import { userCreate } from '../../redux/reducer'
 
 const PERMISSIONS_LIST = [
     'View Subscriptions',
@@ -51,12 +52,13 @@ function AddUserPage() {
     const handleChange = (e) => {
         let name = e.target.name
         let value = e.target.value
+        value=isNaN(value)?value:+value
         setUser(previous => { return {...previous, [name]: value}})
     }
 
     const handleSave = () => {
         //TODO: verify handleSave works
-        dispatch({type: 'USER_CREATE', payload: {...user, permissions: convertPermissionsToList(permissions)}})
+        dispatch(userCreate({...user, permissions: convertPermissionsToList(permissions)}))
         // redirect to all users
         navigate('../')
     }

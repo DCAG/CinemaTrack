@@ -3,14 +3,13 @@ import { useSelector } from 'react-redux'
 import UserComponent from '../../components/users/UserComponent'
 
 function AllUsersPage() {
-		const users = useSelector(store => store.users)
+	  const usersIds = useSelector(store => store.users?.map(user=>user._id))
     return (
-    <div>
-			<h1>hello</h1>
+    <div className='main-pages'>
         {
-            users.map((user,index) => {
+            usersIds.map((userId) => {
                 return (
-                    <UserComponent key={index} user={user} />
+                    <UserComponent key={userId} id={userId} />
                 )
             })
         }

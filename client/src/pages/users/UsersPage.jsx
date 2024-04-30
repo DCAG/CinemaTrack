@@ -5,7 +5,7 @@ function UsersPage() {
     const location = useLocation()
 
     return (
-    <div>
+    <div className='main-pages'>
         <h1>
             Users
         </h1>
