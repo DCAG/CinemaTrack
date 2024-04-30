@@ -70,30 +70,32 @@ function EditUserPage() {
 
     return (
     <div>
-        <h1>
+        <h2>
             Edit User: {user.firstName+' '+user.lastName}
-        </h1>
-        First Name: <input type="text" name="firstName" value={user?.firstName} onChange={handleChange} /> <br />
-        Last Name: <input type="text" name="lastName" value={user?.lastName} onChange={handleChange} /> <br />
-        Username: <input type="text" name="username" value={user?.username} onChange={handleChange} /> <br />
-        Session Timeout (Minutes): <input type="number" name="sessionTimeout" value={user?.sessionTimeout} onChange={handleChange} /> <br />
-        Created Date: {user?.createdDate} <br />
-        Permissions: <br />
-        <div className='permissions'>
-        {
-            Object.keys(permissions).map(item => {
-                return (
-                    <label key={item}>
-                        <input type="checkbox" name={item} checked={permissions[item]??false} onChange={handleCheck} />
-                        {item}
-                    </label>
-                )
-            })
-        }
+        </h2>
+        <div className='user-form'>
+            <label>First Name:</label> <input type="text" name="firstName" value={user?.firstName} onChange={handleChange} /> <br />
+            <label>Last Name:</label> <input type="text" name="lastName" value={user?.lastName} onChange={handleChange} /> <br />
+            <label>Username:</label> <input type="text" name="username" value={user?.username} onChange={handleChange} /> <br />
+            <label>Session Timeout (Minutes):</label> <input type="number" name="sessionTimeout" value={user?.sessionTimeout} onChange={handleChange} /> <br />
+            <label>Created Date:</label> {user?.createdDate} <br />
+            <label>Permissions:</label> <br />
+            <div className='permissions'>
+            {
+                Object.keys(permissions).map(item => {
+                    return (
+                        <label key={item}>
+                            <input type="checkbox" name={item} checked={permissions[item]??false} onChange={handleCheck} />
+                            {item}
+                        </label>
+                    )
+                })
+            }
+            </div>
+            <br />
+            <button onClick={handleUpdate}>Update</button>
+            <button onClick={handleCancel}>Cancel</button>
         </div>
-        <br />
-        <button onClick={handleUpdate}>Update</button>
-        <button onClick={handleCancel}>Cancel</button>
     </div>
     )
 }

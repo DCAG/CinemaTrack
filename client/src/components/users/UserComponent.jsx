@@ -20,12 +20,12 @@ function UserComponent({id}) {
     return <div></div>
   }
   return (
-    <div>
-        Name: {user.firstName +' '+user.lastName} <br />
-        Username: {user.username} <br />
-        Session Timeout (Minutes): {user.sessionTimeout} <br />
-        Created Date: {user.createdDate} <br />
-        Permissions: {user.permissions?.join(', ')} <br />
+    <div className='user-component user-form'>
+        <label>Name:</label> {user.firstName +' '+user.lastName} <br />
+        <label>Username:</label> {user.username} <br />
+        <label>Session Timeout (Minutes):</label> {user.sessionTimeout} <br />
+        <label>Created Date:</label> {user.createdDate} <br />
+        <label>Permissions:</label> {user.permissions?.join(', ')} <br />
         <br />
         <button onClick={handleEdit}>Edit</button>
         <button onClick={handleDelete}>Delete</button>
