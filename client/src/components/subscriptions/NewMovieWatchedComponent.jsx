@@ -1,21 +1,28 @@
 import React, { useState } from 'react'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-
-function NewMovieWatchedComponent({watched}) {
-  const movies = useSelector(store => store.movies.map(movie=>({name:movie.name, _id:movie._id})), shallowEqual)
-  const [subscription, setSubscription] = useState({movie: '', date: ''})
+import { useDispatch, useSelector } from 'react-redux'
+import { subscriptionCreate, selectMoviesIdsNames } from '../../redux/reducer'
+function NewMovieWatchedComponent({memberId, watched}) {
+  const dispatch = useDispatch()
+  const movies = useSelector(selectMoviesIdsNames)
+  const [subscription, setSubscription] = useState({movie: '', date: (new Date()).toISOString().replace(/T.*Z$/,'')})
   const handleChange = (e) => {
     let name = e.target.name
     let value = e.target.value
     setSubscription(previous => { return {...previous, [name]: value}})
   }
   const handleSubscribe = () => {
+    if(!subscription.movie || !subscription.date){
+      return
+    }
 
+    dispatch(subscriptionCreate({...subscription,member: memberId}))
+    setSubscription({...subscription, movie: ''})
   }
   return (
     <div className='newmoviesub-component'>
         <h3>Add a new movie</h3>
-        <select name="movie" onChange={handleChange} style={{maxWidth:'100px'}}>
+        <select name="movie" value={subscription.movie} onChange={handleChange}>
+          <option value="" disabled>select a movie</option>
           {
             movies
             ?.filter(movie => !watched?.includes(movie._id))
@@ -27,7 +34,7 @@ function NewMovieWatchedComponent({watched}) {
             })
           }
         </select>
-        <input type="date" name="date" value={(new Date()).toISOString().replace(/T.*Z$/,'')} onChange={handleChange} style={{maxWidth:'100px'}}/> <br />
+        <input type="date" id="" name="date" value={subscription.date} onChange={handleChange}/> <br />
         <button onClick={handleSubscribe}>Subscribe</button>
     </div>
   )
