@@ -1,12 +1,20 @@
 import React from 'react'
-import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 
 function MoviesPage() {
+    const navigate = useNavigate()
     const location = useLocation()
+
+    const handleClick = (e) => {
+      e.preventDefault()
+      const findText = e.target.elements.findText.value
+      navigate(findText?'?name='+findText:'.')
+    }
+
     return (
     <div className='main-pages'>
         <h1>
-            MoviesPage
+            Movies
         </h1>
         <nav className='main-nav'>
             <ul>
@@ -15,6 +23,12 @@ function MoviesPage() {
                 </li>
                 <li className={location.pathname.endsWith('add')?'selected-link':''}>
                     <Link to='add'>Add Movie</Link>
+                </li>
+                <li>
+                  <form id="findForm" onSubmit={handleClick}>
+                    Find A Movie: <input type="text" name="findText" />
+                    <input type="submit" value="Find" />
+                  </form>
                 </li>
             </ul>
         </nav>

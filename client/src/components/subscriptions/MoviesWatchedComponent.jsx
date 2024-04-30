@@ -1,28 +1,30 @@
 import React, {useEffect, useState} from 'react'
 import NewMovieWatchedComponent from './NewMovieWatchedComponent'
 import { Link } from 'react-router-dom'
-function MoviesWatchedComponent({subscriptions}) {
+import { useSelector } from 'react-redux'
+
+function MoviesWatchedComponent({memberId}) {
+  const allSubscriptions = useSelector(store => store.subscriptions)
+  const mySubscriptions = allSubscriptions.find(sub=>sub.member._id==memberId)
+  const subscriptions = mySubscriptions?.movies??[] 
   const [showDialog, setShowDialog] = useState(false)
   const handleSubscribe = () => {
       setShowDialog(previous => !previous)
   }
-  useEffect(() => {
-    console.log(subscriptions?.map(sub=>sub.movie._id))
-  },[])
+
   return (
     <div className='movieswatched-component'>
         <h3>Movies Watched</h3>
         <button onClick={handleSubscribe}>Subscribe to new movie</button>
         <br />
         <div style={!showDialog?{display:'none'}:{}}>
-          <NewMovieWatchedComponent watched={subscriptions?.map(sub=>sub.movie._id)}/>
+          <NewMovieWatchedComponent memberId={memberId} watched={subscriptions?.map(sub=>sub.movie._id)}/>
         </div>
         <ul>
             {
                 subscriptions?.map(sub => {
                     return (
-                      //TODO: A click on a movie link will redirect to “All Movies” page that present ONLY the selected movie.
-                        <li key={sub.movie._id}><Link to={`/main/movies?find=${sub.movie._id}`}>{sub.movie.name}</Link> {', '+sub.date.replace(/T.*Z$/,'')}</li>
+                        <li key={sub.movie._id}><Link to={`/main/movies?name=${sub.movie.name}`}>{sub.movie.name}</Link> {', '+sub.date.replace(/T.*Z$/,'')}</li>
                     )
                 })
             }

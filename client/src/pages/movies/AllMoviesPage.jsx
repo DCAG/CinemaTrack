@@ -1,24 +1,36 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import MovieComponent from '../../components/movies/MovieComponent'
-import { shallowEqual, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import LoadingWheel from '../../assets/loading.svg'
 import { selectMoviesIdsNames } from '../../redux/reducer'
+import { useLocation } from 'react-router-dom'
+
+/**
+function to get query params from url
+ref: https://v5.reactrouter.com/web/example/query-parameters
+*/
+function useQuery() {
+  const { search } = useLocation();
+
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
 
 function AllMoviesPage() {
-  // TODO: decide to keep or change back to regular selector
   const movies = useSelector(selectMoviesIdsNames) // memoized selector
   const status = useSelector(store => store.status)
   const [searchResults, setSearchResults] = useState(movies??[])
 
-  const handleClick = (e) => {
-    e.preventDefault()
-    const findText = e.target.elements.findText.value
-    setSearchResults(movies.filter(movie => movie.name.toLowerCase().includes(findText)))
-  }
+  const query = useQuery()
+  const name = query.get("name")
 
   useEffect(() => {
-    setSearchResults(movies)
-  },[movies])
+    if(name){
+      setSearchResults(movies.filter(movie => movie.name.toLowerCase().includes(name.toLowerCase())))
+    }
+    else{
+      setSearchResults(movies)
+    }
+  },[name, movies])
   
   if(status === 'loading'){
     //DELETEME: select one spinner and deleteh the others
@@ -28,11 +40,6 @@ function AllMoviesPage() {
 
   return (
   <div>
-    {/* TODO: move the find form to the moviesPage and pass a parameter so the results will be based on the parameter */}
-    <form id="findForm" onSubmit={handleClick}>
-      Find A Movie: <input type="text" name="findText" autoFocus={true} />
-      <input type="submit" value="Find" />
-    </form>
     <br />
       <br />
       {
