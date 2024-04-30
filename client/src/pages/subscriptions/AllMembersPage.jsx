@@ -1,9 +1,10 @@
 import React from 'react'
-import { shallowEqual, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import MemberComponent from '../../components/subscriptions/MemberComponent'
+import { selectMembersIdsNames } from '../../redux/reducer'
 
 function AllMembersPage() {
-    const membersIds = useSelector(store => store.members.map(member => member._id), shallowEqual)
+    const membersIds = useSelector(selectMembersIdsNames)
     
     return (
     <div>
