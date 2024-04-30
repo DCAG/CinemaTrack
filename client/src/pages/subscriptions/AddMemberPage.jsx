@@ -12,6 +12,7 @@ function AddMemberPage() {
         setMember(previous => { return {...previous, [name]: value}})
     }
     const handleSave = () => {
+        //TODO: make sure it works
         dispatch({type:'MEMBER_CREATE', payload:member})
     }
     const handleCancel = () => {
@@ -19,9 +20,9 @@ function AddMemberPage() {
     }
     return (
     <div className='generic-form'>
-        <h1>
+        <h2>
             Add New Member
-        </h1>
+        </h2>
         <br />
         <label>Name:</label> <input type="text" onChange={handleChange} /> <br />
         <label>Email:</label> <input type="text" onChange={handleChange} /> <br />

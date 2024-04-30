@@ -28,6 +28,7 @@ function AddMoviePage() {
         <label>Genres:</label> <input type="text" name="genres" onChange={handleChange} /> <br />
         <label>Image URL:</label> <input type="url" name="image" onChange={handleChange} /> <br />
         <label>Premiered:</label> <input type="date" name="premiered" onChange={handleChange} /> <br />
+        <br />
         <button onClick={handleSave}>save</button>
         <button onClick={handleCancel}>cancel</button>
     </div>
