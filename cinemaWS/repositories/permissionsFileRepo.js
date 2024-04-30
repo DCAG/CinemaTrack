@@ -5,11 +5,11 @@ const VALID_PERMISSIONS = [
     "View Subscriptions",
     "Create Subscriptions",
     "Delete Subscriptions",
-    "Update Subscriptio",
+    "Update Subscriptions",
     "View Movies",
     "Create Movies",
     "Delete Movies",
-    "Update Movie"
+    "Update Movies"
 ]
 
 const isValidPermissionsList = (arr) => {
@@ -31,7 +31,7 @@ const getAll = async () => {
 
 const getById = async (id) => {
     const data = await jsonfile.readFile(PERMISSIONS_FILE)
-    return data.find(item => item.id === id)
+    return data.find(item => item.userId === id)
 }
 
 const create = async (object) => {

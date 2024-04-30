@@ -39,16 +39,55 @@ const verifyCredentials = async (username, password) => {
     return credentials.password === password
 }
 
-const getById = (id) => {
-    return usersCollRepo.getById(id)
+const getById = async (id) => {
+    const data = await Promise.all([
+        usersCollRepo.getById(id),
+        permissionsFileRepo.getById(id),
+        usersFileRepo.getById(id)
+    ])
+    const creds = data[0]
+    const userPermissions = data[1]
+    const userData = data[2]
+    
+    const userId = creds._id.toString()
+
+    return {
+        _id: userId,
+        permissions: userPermissions.permissions,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        username: userData.username,
+        createdDate: userData.createdDate,
+        sessionTimeout: userData.sessionTimeout,
+    }
 }
 
 const update = (id,object) => {
     return usersCollRepo.update(id,object)
 }
 
-const create = (object) => {
-    return usersCollRepo.create(object)
+const create = async (object) => {
+    console.log(object)
+    const data = await usersCollRepo.create(object)
+    const permissionsFileObj = {
+        userId: data._id,
+        permissions: object.permissions
+    }
+    const usersFileObj = {
+        id: data._id,
+        firstName: object.firstName,
+        lastName: object.lastName,
+        createdDate: (new Date()).toISOString().replace(/T.*Z$/,''),
+        username: object.username,
+        sessionTimeout: +object.sessionTimeout,
+    }
+    const result = await Promise.all([
+        permissionsFileRepo.create(permissionsFileObj),
+        usersFileRepo.create(usersFileObj)
+    ])
+    console.log(result)
+    const createdUser = await getById(data._id)
+    return createdUser
 }
 
 const remove = async (id) => {

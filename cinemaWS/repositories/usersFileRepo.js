@@ -18,9 +18,9 @@ const getByUsername = async (username) => {
 }
 
 const create = async (object) => {
-    if(!(object.firstName && object.lastName && object.username && object.sessionTimeout)){
+    if(!(object.id && object.createdDate && object.firstName && object.lastName && object.username && object.sessionTimeout)){
         throw {
-            message: "one of the fields is missing: firstName, lastName, username, sessionTimeout",
+            message: "one of the fields is missing: id, createdDate, firstName, lastName, username, sessionTimeout",
             target: object
         }
     }
