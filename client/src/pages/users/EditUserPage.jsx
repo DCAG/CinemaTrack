@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+import { userUpdate } from '../../redux/reducer'
 
 const PERMISSIONS_LIST = [
     'View Subscriptions',
@@ -34,6 +35,7 @@ function EditUserPage() {
         setUser(previous => tempUser??previous)
         setPermissions(convertPermissionsFromList(tempUser?.permissions??{}))
     },[users])
+
     const handleCheck = (e) => {
         // dependency is for viewing purposes. This will be be enforced on the server side as well.
         let dependency = {}
@@ -57,14 +59,11 @@ function EditUserPage() {
     }
 
     const handleUpdate = () => {
-        //TODO: verify handleUpdate works
-        dispatch({type: 'USER_UPDATE', payload: {...user, permissions: convertPermissionsToList(permissions)}})
-        // redirect to all users
+        dispatch(userUpdate(userId,{...user, permissions: convertPermissionsToList(permissions)}))
         navigate('../')
     }
 
     const handleCancel = () => {
-        // redirect to all users
         navigate('../')
     }
 

@@ -336,9 +336,14 @@ export const selectMoviesIdsNames = createSelector(
   movies => movies.map(movie => ({ _id: movie._id, name: movie.name }))
 )
 
-export const selectMembersIdsNames = createSelector(
+export const selectMembersIds = createSelector(
   state => state.members,
   members => members.map(member => member._id)
+)
+
+export const selectUsersIds = createSelector(
+  state => state.users,
+  users => users.map(user => user._id)
 )
 
 export default rootReducer

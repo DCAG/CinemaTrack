@@ -62,8 +62,16 @@ const getById = async (id) => {
     }
 }
 
-const update = (id,object) => {
-    return usersCollRepo.update(id,object)
+const update = async (id,object) => {
+    let userToUpdate = {...object} // prepare object to update in 'users.json' file
+    delete userToUpdate.permissions // sent only to permissions file
+    delete userToUpdate.createdDate // cannot be changed
+    await Promise.all([
+        usersFileRepo.update(id, userToUpdate),
+        usersCollRepo.update(id,{username: object.username}),
+        permissionsFileRepo.update(id,{permissions: object.permissions})
+    ])
+    return getById(id)
 }
 
 const create = async (object) => {
