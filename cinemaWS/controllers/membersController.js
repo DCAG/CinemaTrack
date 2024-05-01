@@ -27,7 +27,7 @@ router.get('/:id', async (req,res) => {
     }
 })
 
-router.post('/create', async (req,res) => {
+router.post('/', async (req,res) => {
     try{
         const body = req.body;
         const result = await membersService.create(body)

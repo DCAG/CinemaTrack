@@ -1,6 +1,7 @@
 import React,{useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import { memberCreate } from '../../redux/reducer'
 
 function AddMemberPage() {
     const navigate = useNavigate()
@@ -12,8 +13,8 @@ function AddMemberPage() {
         setMember(previous => { return {...previous, [name]: value}})
     }
     const handleSave = () => {
-        //TODO: make sure it works
-        dispatch({type:'MEMBER_CREATE', payload:member})
+        dispatch(memberCreate(member))
+        navigate('../')
     }
     const handleCancel = () => {
         navigate('../')
@@ -24,9 +25,9 @@ function AddMemberPage() {
             Add New Member
         </h2>
         <br />
-        <label>Name:</label> <input type="text" onChange={handleChange} /> <br />
-        <label>Email:</label> <input type="text" onChange={handleChange} /> <br />
-        <label>City:</label> <input type="text" onChange={handleChange} /> <br />
+        <label>Name:</label> <input type="text" name="name" onChange={handleChange} /> <br />
+        <label>Email:</label> <input type="text" name="email" onChange={handleChange} /> <br />
+        <label>City:</label> <input type="text" name="city" onChange={handleChange} /> <br />
         <br />
         <button onClick={handleSave}>save</button>
         <button onClick={handleCancel}>cancel</button>

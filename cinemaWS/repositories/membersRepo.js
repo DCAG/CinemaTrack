@@ -12,5 +12,15 @@ const getById = async (id) => {
     return data
 }
 
+const create = async (object) => {
+    const {data} = await axios.post(MEMBERS_URL, object)
+    return data
+}
 
-module.exports = {getById, getAll}
+const remove = async (id) => {
+    const {data} = await axios.delete(`${MEMBERS_URL}/${id}`)
+    return data
+}
+
+
+module.exports = {getById, getAll, create, remove}
