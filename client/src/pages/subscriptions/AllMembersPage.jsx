@@ -1,10 +1,10 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import MemberComponent from '../../components/subscriptions/MemberComponent'
-import { selectMembersIdsNames } from '../../redux/reducer'
+import { selectMembersIds } from '../../redux/reducer'
 
 function AllMembersPage() {
-    const membersIds = useSelector(selectMembersIdsNames)
+    const membersIds = useSelector(selectMembersIds)
     
     return (
     <div>

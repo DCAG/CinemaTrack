@@ -1,10 +1,11 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import UserComponent from '../../components/users/UserComponent'
+import { selectUsersIds } from '../../redux/reducer'
 
 function AllUsersPage() {
-    //TODO: replace this selector with a memoized one
-	  const usersIds = useSelector(store => store.users?.map(user=>user._id))
+	  const usersIds = useSelector(selectUsersIds)
+    
     return (
     <div>
         {
