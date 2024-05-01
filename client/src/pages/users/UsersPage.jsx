@@ -11,10 +11,10 @@ function UsersPage() {
         </h1>
         <nav className='main-nav'>
             <ul>
-                <li className={location.pathname.endsWith('users')?'selected-link':''}>
+                <li className={location.pathname.match(/users\/*$/)?'selected-link':''}>
                     <Link to='.'>All Users</Link>
                 </li>
-                <li className={location.pathname.endsWith('add')?'selected-link':''}>
+                <li className={location.pathname.match(/users\/add\/*$/)?'selected-link':''}>
                     <Link to='add'>Add User</Link>
                 </li>
             </ul>
