@@ -34,7 +34,7 @@ function AddUserPage() {
     },[])
 
     const handleCheck = (e) => {
-        // dependency is for viewing purposes. This will be be enforced on the server side as well.
+        // TODO: dependency is for viewing purposes. This will be be enforced on the server side as well.
         let dependency = {}
         if(['Create Subscriptions','Update Subscriptions','Delete Subscriptions'].includes(e.target.name) && e.target.checked){            
             dependency = {'View Subscriptions': true}
@@ -57,14 +57,11 @@ function AddUserPage() {
     }
 
     const handleSave = () => {
-        //TODO: verify handleSave works
         dispatch(userCreate({...user, permissions: convertPermissionsToList(permissions)}))
-        // redirect to all users
         navigate('../')
     }
 
     const handleCancel = () => {
-        // redirect to all users
         navigate('../')
     }
 

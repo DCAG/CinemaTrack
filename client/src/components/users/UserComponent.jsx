@@ -22,7 +22,7 @@ function UserComponent({id}) {
   return (
     <div className='user-component user-form'>
         <label>Name:</label> {user.firstName +' '+user.lastName} <br />
-        <label>Username:</label> {user.username} <br />
+        <label>Username:</label> <b>{user.username}</b> <br />
         <label>Session Timeout (Minutes):</label> {user.sessionTimeout} <br />
         <label>Created Date:</label> {user.createdDate} <br />
         <label>Permissions:</label> {user.permissions?.join(', ')} <br />

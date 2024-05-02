@@ -16,6 +16,7 @@ const PERMISSIONS_LIST = [
 
 function EditUserPage() {
     const {id: userId} = useParams()
+    // TODO: check if selector can be simpler and the page without useEffect now with new redux implementations
     const users = useSelector(store => store.users)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -37,6 +38,7 @@ function EditUserPage() {
     },[users])
 
     const handleCheck = (e) => {
+        //TODO: make sure viewing is mandatory on server side if its a dependency. (READ the requirements again!!! it may not be necessary!)
         // dependency is for viewing purposes. This will be be enforced on the server side as well.
         let dependency = {}
         if(['Create Subscriptions','Update Subscriptions','Delete Subscriptions'].includes(e.target.name) && e.target.checked){            
