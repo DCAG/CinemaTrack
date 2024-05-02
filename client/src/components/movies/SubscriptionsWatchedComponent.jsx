@@ -13,11 +13,10 @@ function SubscriptionsWatchedComponent({subscriptions}) {
           subscriptions?.map(sub => {
             return (
               <li key={sub._id}>
-                {/*
-                NOTE:
-                Instruction: ...click on the Subscriber link will redirect to the “Member” page...
-                Interpretation: There is no "Member Page", so its either "EditMember Page" or present the member in "All Members Page". I chose the 2nd option with scrolling to member location.
-                 */}
+                {/**
+                * // REQ: ...click on the Subscriber link will redirect to the “Member” page...
+                * Interpretation: There is no "Member Page", so its either "EditMember Page" or present the member in "All Members Page". I chose the 2nd option with scrolling to member location.
+                */}
                 <HashLink smooth to={`/main/subscriptions/#${sub.member._id}`}>{sub.member.name}</HashLink>
                 {', ' + sub.date.replace(/T.*Z$/,'')}
               </li>
