@@ -3,6 +3,7 @@
 import axios from "axios";
 import { createSelector } from "reselect";
 
+//TODO: split redux store to slices
 var initialState = {
     movies: [],
     members: [],
@@ -82,7 +83,7 @@ export const rootReducer = (state = initialState, action) => {
 
 const CINEMA_BASE_URL = 'http://localhost:3001'
 
-// Action Creators
+//#region Action Creators
 export const moviesLoaded = (payload) => ({ type: 'MOVIES_LOADED', payload: payload })
 export const moviesLoading = () => ({ type: 'MOVIES_LOADING' })
 export const fetchDataError = (error) => ({ type: 'FETCH_DATA_ERROR', payload: error })
@@ -106,8 +107,19 @@ export const subscriptionsLoaded = (payload) => ({ type: 'SUB_LOADED', payload: 
 export const subscriptionsLoading = () => ({ type: 'SUB_LOADING' })
 export const subscriptionCreated = (subscription) => ({ type: 'SUB_CREATED', payload: subscription })
 export const subscriptionDeleted = (id) => ({ type: 'SUB_DELETED', payload: id })
+//#endregion
 
-// Thunk Function
+//#region Auth
+//TODO:consider making a wrapper around web requests to make the calls look simpler and handle emitted errors in central location - hopefully easier
+const getHeaders = () => {
+  const accessToken = sessionStorage['Authorization']
+  const headers = {'x-access-token': "Bearer " + accessToken}
+  return headers
+}
+//#endregion
+
+//#region Thunk Functions
+// 'Delete Subscriptions',
 export function subscriptionDelete(id) {
   return async (dispatch, getState) => {
     try{
@@ -122,6 +134,7 @@ export function subscriptionDelete(id) {
   }
 }
 
+// 'Update Subscriptions',
 export function subscriptionCreate(subscription) {
   return async (dispatch, getState) => {
     try{
@@ -136,12 +149,13 @@ export function subscriptionCreate(subscription) {
   }
 }
 
+// 'View Subscriptions',
 export async function fetchSubscriptions(dispatch, getState) {
   try{
     dispatch(subscriptionsLoading())
     const stateBefore = getState()
     console.log('Subscriptions before dispatch: ', stateBefore.subscriptions.length)
-    const {data} = await axios.get(CINEMA_BASE_URL + '/subscriptions')
+    const {data} = await axios.get(CINEMA_BASE_URL + '/subscriptions', {headers: getHeaders()})
     dispatch(subscriptionsLoaded(data))
     const stateAfter = getState()
     console.log('Subscriptions after dispatch: ', stateAfter.subscriptions.length)
@@ -153,6 +167,7 @@ export async function fetchSubscriptions(dispatch, getState) {
   }
 }
 
+// 'Delete Movies',
 export function movieDelete(id) {
   return async (dispatch, getState) => {
     try{
@@ -169,6 +184,7 @@ export function movieDelete(id) {
   }
 }
 
+// 'Create Movies',
 export function movieCreate(movie) {
   return async (dispatch, getState) => {
     try{
@@ -183,6 +199,7 @@ export function movieCreate(movie) {
   }
 }
 
+// 'Update Movies'
 export function movieUpdate(id, movie) {
   return async (dispatch, getState) => {
     try{
@@ -197,12 +214,13 @@ export function movieUpdate(id, movie) {
   }
 } 
 
+// 'View Movies',
 export async function fetchMovies(dispatch, getState) {
   try{
     dispatch(moviesLoading())
     const stateBefore = getState()
     console.log('Movies before dispatch: ', stateBefore.movies.length)
-    const {data} = await axios.get(CINEMA_BASE_URL + '/movies')
+    const {data} = await axios.get(CINEMA_BASE_URL + '/movies', {headers: getHeaders()})
     dispatch(moviesLoaded(data))
     const stateAfter = getState()
     console.log('Movies after dispatch: ', stateAfter.movies.length)
@@ -214,6 +232,7 @@ export async function fetchMovies(dispatch, getState) {
   }
 }
 
+// 'Delete Subscriptions',
 export function memberDelete(id) {
   return async (dispatch, getState) => {
     try{
@@ -230,6 +249,7 @@ export function memberDelete(id) {
   }
 }
 
+// 'Create Subscriptions',
 export function memberCreate(member) {
   return async (dispatch, getState) => {
     try{
@@ -244,6 +264,7 @@ export function memberCreate(member) {
   }
 }
 
+// 'Update Subscriptions',
 export function memberUpdate(id, member) {
   return async (dispatch, getState) => {
     try{
@@ -258,12 +279,13 @@ export function memberUpdate(id, member) {
   }
 } 
 
+// 'View Subscriptions',
 export async function fetchMembers(dispatch, getState) {
   try{
     dispatch(membersLoading())
     const stateBefore = getState()
     console.log('Members before dispatch: ', stateBefore.members.length)
-    const {data} = await axios.get(CINEMA_BASE_URL + '/members')
+    const {data} = await axios.get(CINEMA_BASE_URL + '/members', {headers: getHeaders()})
     dispatch(membersLoaded(data))
     const stateAfter = getState()
     console.log('Members after dispatch: ', stateAfter.members.length)
@@ -275,6 +297,7 @@ export async function fetchMembers(dispatch, getState) {
   }
 }
 
+// Admin Only
 export function userDelete(id) {
   return async (dispatch, getState) => {
     try{
@@ -289,6 +312,7 @@ export function userDelete(id) {
   }
 }
 
+// Admin Only
 export function userCreate(user) {
   return async (dispatch, getState) => {
     try{
@@ -303,6 +327,7 @@ export function userCreate(user) {
   }
 }
 
+// Admin Only
 export function userUpdate(id, user) {
   return async (dispatch, getState) => {
     try{
@@ -317,12 +342,13 @@ export function userUpdate(id, user) {
   }
 }
 
+// Admin Only
 export async function fetchUsers(dispatch, getState) {
   try{
     dispatch(usersLoading())
     const stateBefore = getState()
     console.log('Users before dispatch: ', stateBefore.users.length)
-    const {data} = await axios.get(CINEMA_BASE_URL + '/users')
+    const {data} = await axios.get(CINEMA_BASE_URL + '/users', {headers: getHeaders()})
     dispatch(usersLoaded(data))
     const stateAfter = getState()
     console.log('Users after dispatch: ', stateAfter.users.length)
@@ -333,8 +359,9 @@ export async function fetchUsers(dispatch, getState) {
     console.log('[fetchUsers] error: ', stateAfterError.error)
   }
 }
+//#endregion
 
-// Memoized selectors
+//#region Memoized selectors
 export const selectMoviesIdsNames = createSelector(
   state => state.movies,
   movies => movies.map(movie => ({ _id: movie._id, name: movie.name }))
@@ -349,5 +376,5 @@ export const selectUsersIds = createSelector(
   state => state.users,
   users => users.map(user => user._id)
 )
-
+//#endregion
 export default rootReducer

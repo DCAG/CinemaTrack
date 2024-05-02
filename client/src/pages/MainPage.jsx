@@ -1,13 +1,13 @@
 import React from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
+import useAuth from '../utils/useAuth'
 
 function MainPage() {
     const navigate = useNavigate()
-
+    const {logoutUser} = useAuth()
     const handleLogout = () => {
-        sessionStorage.clear()
+        logoutUser()
         navigate('/') // redirect to login page
-        //TODO: replace with logout from middleware auth context (?)    
     }
 
     return (
@@ -30,7 +30,7 @@ function MainPage() {
                     <Link to='subscriptions'>Subscriptions</Link>
                 </li>
                 <li  className={location.pathname.includes('users')?'selected-link':''}
-                // style={!sessionStorage['isAdmin']?{visibility:'hidden',display:'none'}:{}}
+                //style={sessionStorage['username']!=='admin'?{visibility:'hidden',display:'none'}:{}}
                 >
                     <Link to='users'>Users Management</Link>
                 </li>

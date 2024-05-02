@@ -24,10 +24,10 @@ app.use(cors())
 app.use(express.json())
 app.use('/auth', authController);
 //app.use('/REPLACE_ME', jwtauth, REPLACE_MEController);
-app.use('/members', membersController);
-app.use('/movies', moviesController);
-app.use('/subscriptions', subscriptionsController);
-app.use('/users', usersController);
+app.use('/members', jwtauth, membersController);
+app.use('/movies', jwtauth, moviesController);
+app.use('/subscriptions', jwtauth, subscriptionsController);
+app.use('/users', jwtauth, usersController);
 
 const PORT = process.env.SERVER_PORT
 app.listen(PORT,()=>{

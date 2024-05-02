@@ -27,8 +27,9 @@ const getAll = async () => {
     })
 }
 
-const getByUsername = (username) => {
-    return usersCollRepo.getByUsername(username)
+const getByUsername = async (username) => {
+    const user = await usersCollRepo.getByUsername(username)
+    return await getById(user._id.toString())
 }
 
 const verifyCredentials = async (username, password) => {
@@ -52,7 +53,7 @@ const getById = async (id) => {
     const creds = data[0]
     const userPermissions = data[1]
     const userData = data[2]
-    
+     
     const userId = creds._id.toString()
 
     return {

@@ -1,23 +1,42 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import useAuth from '../utils/useAuth'
+
+import { useDispatch } from 'react-redux'
+import {fetchMovies, fetchMembers, fetchUsers, fetchSubscriptions} from '../redux/reducer.js'
+
 
 const LOGIN_URL = 'http://localhost:3001/auth/login'
 
 function LoginPage() {
+    const dispatch = useDispatch()
     const navigate = useNavigate()
+    const {loginUser} = useAuth()
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     
     const handleLogin = async () => {
-        const body = {
-            username: username,
-            password: password
-        }
-        const {data} = await axios(LOGIN_URL,body)
-        sessionStorage['Authorization'] = data.accessToken
+      const loginData = {
+          username: username,
+          password: password
+      }
+
+      try {
+        const {data} = await axios.post(LOGIN_URL, loginData)
+        console.log("login successful.",data)
+        loginUser(data.accessToken, data.user.username, data.user.firstName, data.user.numOfActions,data.user.maxActions)
+        dispatch(fetchMovies)
+        dispatch(fetchMembers)
+        dispatch(fetchUsers)
+        dispatch(fetchSubscriptions)
+        
         navigate('/main')
+      }catch(error){
+        console.log(error)
+        alert(error.response?.data??error)
+      }
     }
 
     return (
