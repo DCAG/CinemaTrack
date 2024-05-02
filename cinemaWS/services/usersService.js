@@ -36,6 +36,10 @@ const verifyCredentials = async (username, password) => {
         return false
     }
     const credentials = await usersCollRepo.getByUsername(username)
+    if(!credentials || !credentials.password){
+        // either user does not exist or was created by admin and password was not set
+        return false
+    }
     return credentials.password === password
 }
 
@@ -60,6 +64,38 @@ const getById = async (id) => {
         createdDate: userData.createdDate,
         sessionTimeout: userData.sessionTimeout,
     }
+}
+
+const createaccount = async ({username,password}) => {
+    if(!password.trim()){
+        throw {
+            message: 'password must not be empty or contain spaces',
+            statusCode: 400,
+            name: 'USER_PASS_EMPTY'
+        }
+    }
+    const creds = await usersCollRepo.getByUsername(username)
+    if(!creds){
+        throw {
+            message: 'user does not exist',
+            statusCode: 400,
+            name: 'USER_NOT_EXIST'
+        }
+    }
+    if(creds.password){
+        throw {
+            // prevent password change for existing user
+            // security concern: even though the user exist throw the same error as before
+            // prevent giving knowlegde about existance of a user for perpetrator
+            message: 'user does not exist',
+            statusCode: 400,
+            name: 'USER_NOT_EXIST'
+        }
+    }
+    
+    await usersCollRepo.update(creds._id,{username, password})
+    // returning true for successful account creation - not to return sensitive information (password)
+    return true
 }
 
 const update = async (id,object) => {
@@ -94,7 +130,7 @@ const create = async (object) => {
         usersFileRepo.create(usersFileObj)
     ])
     console.log(result)
-    const createdUser = await getById(data._id)
+    const createdUser = await getById(data._id.toString())
     return createdUser
 }
 
@@ -102,4 +138,4 @@ const remove = async (id) => {
     return usersCollRepo.remove(id)
 }
 
-module.exports = {getAll, getById, create, update, remove, getByUsername, verifyCredentials}
+module.exports = {getAll, getById, create, update, remove, getByUsername, verifyCredentials, createaccount}

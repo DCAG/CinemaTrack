@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom'
-const USERS_CREATE_URL = 'http://localhost:3001/users/create'
+import axios from 'axios'
+const USERS_CREATE_URL = 'http://localhost:3001/users/createaccount'
 
-//TODO: fix this page
 function CreateAccountPage() {
     const navigate = useNavigate()
 
@@ -15,13 +15,13 @@ function CreateAccountPage() {
                 username: username,
                 password: password
             }
-            const {data} = await axios.put(USERS_CREATE_URL,body)
-            alert(data)
+            const {data} = await axios.post(USERS_CREATE_URL,body)
+            alert(JSON.stringify(data))
             navigate('/') // redirect to login page
         }
         catch(error){
-            alert('Account creation failed. Contact the sysadmin.')
-            //TODO: if the username does not exist in the DB present a relevant message
+            const errorMessage = JSON.stringify(error.response?.data)
+            alert(errorMessage??'Account creation failed. Contact the sysadmin.')
             console.error('account creation failed',error)
         }
     }
