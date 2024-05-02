@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 function MoviesWatchedComponent({memberId}) {
-  const allSubscriptions = useSelector(store => store.subscriptions)
-  const mySubscriptions = allSubscriptions.find(sub=>sub.member._id==memberId)
-  const subscriptions = mySubscriptions?.movies??[] 
+  const mySubscriptionsObj = useSelector(store => store.subscriptions.find(sub=>sub.member?._id==memberId))
+  /**
+   * NOTE: checking if subscription.movies.movie is populated (e.g. in case the movie was deleted and the subscription was not updated with the changes)
+   */
+  const subscriptions = mySubscriptionsObj?.movies.filter(m=>m.movie?._id)??[] 
   const [showDialog, setShowDialog] = useState(false)
   const handleSubscribe = () => {
       setShowDialog(previous => !previous)
@@ -18,11 +20,11 @@ function MoviesWatchedComponent({memberId}) {
         <button onClick={handleSubscribe}>Subscribe to new movie</button>
         <br />
         <div style={!showDialog?{display:'none'}:{}}>
-          <NewMovieWatchedComponent memberId={memberId} watched={subscriptions?.map(sub=>sub.movie._id)}/>
+          <NewMovieWatchedComponent memberId={memberId} watched={subscriptions?.map(sub=>sub.movie?._id)}/>
         </div>
         <ul>
             {
-                subscriptions?.map(sub => {
+                subscriptions.map(sub => {
                     return (
                         <li key={sub.movie._id}><Link to={`/main/movies?name=${sub.movie.name}`}>{sub.movie.name}</Link> {', '+sub.date.replace(/T.*Z$/,'')}</li>
                     )

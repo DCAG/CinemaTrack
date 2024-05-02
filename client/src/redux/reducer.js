@@ -158,6 +158,8 @@ export function movieDelete(id) {
     try{
       const {data} = await axios.delete(CINEMA_BASE_URL + '/movies/' + id)
       dispatch(movieDeleted(data._id))
+      // NOTE: refresh all subscriptions after movie was deleted (so the 'movies.movie' virtual property will not be populated by mongoose for the deleted movie)
+      dispatch(fetchSubscriptions)
     }
     catch(error){
       dispatch(fetchDataError(error))
@@ -215,8 +217,10 @@ export async function fetchMovies(dispatch, getState) {
 export function memberDelete(id) {
   return async (dispatch, getState) => {
     try{
+      // NOTE: deletes member, and subscription object if one exists
       const {data} = await axios.delete(CINEMA_BASE_URL + '/members/' + id)
-      dispatch(memberDeleted(data._id))
+      dispatch(memberDeleted(data.member._id))
+      dispatch(subscriptionDeleted(data.subscription?._id))
     }
     catch(error){
       dispatch(fetchDataError(error))

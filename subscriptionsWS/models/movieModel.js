@@ -30,20 +30,27 @@ movieSchema.pre('find', function(next) {
     options: { _recursed: true },
     transform: (doc, id) => {
       if(doc==null){
-        return doc
+        return null //CHECK: or maybe return {_id:id}?
       }
 
       return {
         _id: doc._id,
         // find() will always have something otherwise the field would not populate
-        date: (doc.movies.find(m=>m.movie.equals(id))).date,
+        date: (doc.movies.find(m=>m.movie?.equals(id))).date,
         member: doc.member
       }
     },
     populate: {
+      // populate 'member' inside the 'subscription' which was populated before
       path: 'member',
       options: { _recursed: true },
-      transform: (doc,id) => ({name: doc.name, _id: doc._id})
+      transform: (doc,id) => {
+        if(doc==null){
+          return null
+        }
+
+        return {name: doc.name, _id: doc._id}
+      }
     },
   })
   next();

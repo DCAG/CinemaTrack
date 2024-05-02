@@ -23,7 +23,7 @@ const create = async (object) => {
         return subscriptionsRepo.create(initialSub)
     }
 
-    if(!memberSubs.movies.find(m=>m.movie._id==movie)){
+    if(!memberSubs.movies.find(m=>m.movie?._id==movie)){
         memberSubs.movies.push({movie,date})
         return subscriptionsRepo.update(memberSubs._id,memberSubs)
     }

@@ -30,7 +30,13 @@ memberSchema.pre('find', function(next) {
     populate: {
       path: 'movies.movie',
       options: { _recursed: true },
-      transform: (doc,id) => ({name: doc.name, _id: doc._id})
+      transform: (doc,id) => {
+        if(doc==null){
+          return null
+        }
+        
+        return {name: doc.name, _id: doc._id}
+      }
     },
   })
   next();
