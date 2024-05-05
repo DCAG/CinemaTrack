@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import MovieComponent from '../../components/movies/MovieComponent'
 import { useSelector } from 'react-redux'
-import LoadingWheel from '../../assets/loading.svg'
 import { selectMoviesIdsNames } from '../../redux/reducer'
 import { useLocation } from 'react-router-dom'
 
@@ -33,8 +32,6 @@ function AllMoviesPage() {
   },[name, movies])
   
   if(status === 'loading'){
-    //DELETEME: select one spinner and deleteh the others
-    {/*return <img src={LoadingWheel} alt="Your SVG" /> */}
     return <div className='loading' />
   }
 

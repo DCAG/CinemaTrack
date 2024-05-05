@@ -14,12 +14,10 @@ const AuthProvider = ({ children }) => {
     }
   }, [])
 
-  const loginUser = (token, username, firstName, numOfActions, maxActions, permissions) => {
+  const loginUser = (token, username, firstName, permissions) => {
     sessionStorage['Authorization'] = token
     sessionStorage['username'] = username
     sessionStorage['firstName'] = firstName
-    sessionStorage['numOfActions'] = numOfActions
-    sessionStorage['maxActions'] = maxActions
     sessionStorage['permissions'] = permissions
     setIsAuthenticated(true)
   }
