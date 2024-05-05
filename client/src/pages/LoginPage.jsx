@@ -26,7 +26,7 @@ function LoginPage() {
       try {
         const {data} = await axios.post(LOGIN_URL, loginData)
         console.log("login successful.",data)
-        loginUser(data.accessToken, data.user.username, data.user.firstName, data.user.numOfActions,data.user.maxActions)
+        loginUser(data.accessToken, data.user.username, data.user.firstName, data.user.numOfActions,data.user.maxActions, JSON.stringify(data.user.permissions))
         dispatch(fetchMovies)
         dispatch(fetchMembers)
         dispatch(fetchUsers)
