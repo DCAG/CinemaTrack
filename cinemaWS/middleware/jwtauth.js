@@ -39,6 +39,7 @@ module.exports = (req, res, next) => {
             return res.status(403).send({
                 name: "RESTRICTED_PAGE_ACCESS_INVALID_TOKEN",
                 message: "This page is accessible only to users who are logged in with a valid(!) token.",
+                error: err,
                 action: { // suggested action
                     type: "redirect",
                     to: "login"

@@ -17,7 +17,7 @@ router.post('/login', async (req,res) => {
         const token = jwt.sign(
             {user},
             JWT_SECRET,
-            {expiresIn:"2h"}
+            {expiresIn:`${user.sessionTimeout}m`}
         );
         console.log("accessToken", token)
         res.send({accessToken: token, user: user})

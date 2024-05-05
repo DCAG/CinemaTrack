@@ -38,7 +38,9 @@ export const rootReducer = (state = initialState, action) => {
           return {...state, status: 'loading'}
         case 'SUB_LOADED':
           return {...state, status: 'idle', subscriptions: action.payload}
-        case 'SUB_CREATED': // also updated (sending: {movie,date,member} and getting {member,movies:[{movie,date}]})
+        case 'SUB_CREATED':
+          // NOTE: called whether a new subscription object is created or one is updated - because of how it is structured.
+          // Sending: {movie,date,member} and getting {member,movies:[{movie,date}]}
           const subscriptions = [...state.subscriptions];
           const subsIndex = state.subscriptions.findIndex(sub => { return sub._id == action.payload._id });
           if(subsIndex == -1){
@@ -119,9 +121,7 @@ export function subscriptionDelete(id) {
       dispatch(subscriptionDeleted(data._id))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[subscriptionDeleted] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 }
@@ -134,9 +134,7 @@ export function subscriptionCreate(subscription) {
       dispatch(subscriptionCreated(data))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[subscriptionCreated] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 }
@@ -153,9 +151,7 @@ export async function fetchSubscriptions(dispatch, getState) {
     console.log('Subscriptions after dispatch: ', stateAfter.subscriptions.length)
   }
   catch(error){
-    dispatch(fetchDataError(error))
-    const stateAfterError = getState()
-    console.log('[fetchSubscriptions] error: ', stateAfterError.error)
+    handleErrors(dispatch,getState,error)
   }
 }
 
@@ -169,9 +165,7 @@ export function movieDelete(id) {
       dispatch(fetchSubscriptions)
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[movieDeleted] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 }
@@ -184,9 +178,7 @@ export function movieCreate(movie) {
       dispatch(movieCreated(data))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[movieCreated] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 }
@@ -199,9 +191,7 @@ export function movieUpdate(id, movie) {
       dispatch(movieUpdated(data))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[movieUpdate] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 } 
@@ -218,9 +208,7 @@ export async function fetchMovies(dispatch, getState) {
     console.log('Movies after dispatch: ', stateAfter.movies.length)
   }
   catch(error){
-    dispatch(fetchDataError(error))
-    const stateAfterError = getState()
-    console.log('[fetchMovies] error: ', stateAfterError.error)
+    handleErrors(dispatch,getState,error)
   }
 }
 
@@ -234,9 +222,7 @@ export function memberDelete(id) {
       dispatch(subscriptionDeleted(data.subscription?._id))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[memberDeleted] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 }
@@ -249,9 +235,7 @@ export function memberCreate(member) {
       dispatch(memberCreated(data))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[memberCreated] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 }
@@ -264,9 +248,7 @@ export function memberUpdate(id, member) {
       dispatch(memberUpdated(data))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[memberUpdate] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 } 
@@ -283,9 +265,7 @@ export async function fetchMembers(dispatch, getState) {
     console.log('Members after dispatch: ', stateAfter.members.length)
   }
   catch(error){
-    dispatch(fetchDataError(error))
-    const stateAfterError = getState()
-    console.log('[fetchMembers] error: ', stateAfterError.error)
+    handleErrors(dispatch,getState,error)
   }
 }
 
@@ -297,9 +277,7 @@ export function userDelete(id) {
       dispatch(userDeleted(data._id))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[userDeleted] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 }
@@ -312,9 +290,7 @@ export function userCreate(user) {
       dispatch(userCreated(data))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[userCreated] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 }
@@ -327,9 +303,7 @@ export function userUpdate(id, user) {
       dispatch(userUpdated(data))
     }
     catch(error){
-      dispatch(fetchDataError(error))
-      const stateAfterError = getState()
-      console.log('[userUpdate] error: ', stateAfterError.error)
+      handleErrors(dispatch,getState,error)
     }
   }
 }
@@ -346,10 +320,15 @@ export async function fetchUsers(dispatch, getState) {
     console.log('Users after dispatch: ', stateAfter.users.length)
   }
   catch(error){
-    dispatch(fetchDataError(error))
-    const stateAfterError = getState()
-    console.log('[fetchUsers] error: ', stateAfterError.error)
+    handleErrors(dispatch,getState,error)
   }
+}
+
+const handleErrors = (dispatch, getState, error, callerName = '') => {
+  const errorData = error?.response?.data??error
+  dispatch(fetchDataError(errorData))
+  const stateAfterError = getState()
+  console.log(stateAfterError.error) //DELETEME:`[${callerName}] error: `, 
 }
 //#endregion
 

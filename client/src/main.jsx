@@ -21,13 +21,13 @@ store.dispatch(fetchSubscriptions)
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-    <AuthProvider>
-      <ProtectedRoutes>
-        <Provider store={store}>
+    <Provider store={store}>
+      <AuthProvider>
+        <ProtectedRoutes>
           <App />
-        </Provider>
-      </ProtectedRoutes>
-    </AuthProvider>
+        </ProtectedRoutes>
+      </AuthProvider>
+    </Provider>
   </BrowserRouter>
   ,
 )
