@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-const USERS_CREATE_URL = 'http://localhost:3001/users/createaccount'
+const USERS_CREATE_URL = 'http://localhost:3001/auth/createaccount'
 
 function CreateAccountPage() {
     const navigate = useNavigate()
