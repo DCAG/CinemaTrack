@@ -5,7 +5,7 @@ import { userUpdate } from '../../redux/reducer'
 import {
     convertPermissionsFromList,
     convertPermissionsToList,
-    calculatePermissionsDependencies
+    getPermissionDependencies
 } from '../../utils/permissions'
 
 function EditUserPage() {
@@ -23,7 +23,7 @@ function EditUserPage() {
     },[storeUser])
 
     const handleCheck = (e) => {
-        const dependencies = calculatePermissionsDependencies(e.target.name,e.target.checked)
+        const dependencies = getPermissionDependencies(e.target.name,e.target.checked)
         setPermissions(previous => {return {
             ...previous,
             ...dependencies,

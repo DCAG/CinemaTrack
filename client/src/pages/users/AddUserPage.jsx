@@ -5,7 +5,7 @@ import { userCreate } from '../../redux/reducer'
 import {
     convertPermissionsFromList,
     convertPermissionsToList,
-    calculatePermissionsDependencies
+    getPermissionDependencies
 } from '../../utils/permissions'
 
 function AddUserPage() {
@@ -19,7 +19,7 @@ function AddUserPage() {
     },[])
 
     const handleCheck = (e) => {
-        const dependencies = calculatePermissionsDependencies(e.target.name,e.target.checked)
+        const dependencies = getPermissionDependencies(e.target.name,e.target.checked)
         setPermissions(previous => {return {
             ...previous,
             ...dependencies,
