@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import SubscriptionsWatchedComponent from './SubscriptionsWatchedComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import { movieDelete } from '../../redux/reducer'
+import { hasPermission } from '../../utils/permissions'
 
 function MovieComponent({id}) {
   const movie = useSelector(store => store.movies.find(movie=>movie._id===id))
@@ -29,10 +30,16 @@ function MovieComponent({id}) {
       genres: {movie.genres ? '"' + movie.genres.join('","') + '"':''}
       <br />
       <img src={movie.image} alt={movie.name + " image"} />
-      <SubscriptionsWatchedComponent subscriptions={movie.subscriptions} />
+      {
+        hasPermission('View Subscriptions') ? <SubscriptionsWatchedComponent subscriptions={movie.subscriptions} /> : <></>
+      }
       <br />
-      <button onClick={handleEdit}>Edit</button>
-      <button onClick={handleDelete}>Delete</button>
+      {
+        hasPermission('Update Movies') ? <button onClick={handleEdit}>Edit</button> : <></>
+      }
+      {
+        hasPermission('Delete Movies') ? <button onClick={handleDelete}>Delete</button> : <></>
+      }
     </div>
   )
 }

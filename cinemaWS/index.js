@@ -13,6 +13,7 @@ const membersController = require('./controllers/membersController')
 const moviesController = require('./controllers/moviesController')
 const subscriptionsController = require('./controllers/subscriptionsController')
 const usersController = require('./controllers/usersController')
+const permissionsauth = require('./middleware/permissionsauth')
 
 const app = express()
 connectDB()
@@ -24,10 +25,10 @@ app.use(cors())
 app.use(express.json())
 app.use('/auth', authController);
 //app.use('/REPLACE_ME', jwtauth, REPLACE_MEController);
-app.use('/members', jwtauth, membersController);
-app.use('/movies', jwtauth, moviesController);
-app.use('/subscriptions', jwtauth, subscriptionsController);
-app.use('/users', jwtauth, usersController);
+app.use('/movies', jwtauth, permissionsauth, moviesController);
+app.use('/members', jwtauth, permissionsauth, membersController);
+app.use('/subscriptions', jwtauth, permissionsauth, subscriptionsController);
+app.use('/users', jwtauth, permissionsauth, usersController);
 
 const PORT = process.env.SERVER_PORT
 app.listen(PORT,()=>{
