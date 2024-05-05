@@ -9,7 +9,7 @@ const getById = (id) => {
 }
 
 const update = (id,object) => {
-    return member.findByIdAndUpdate(id,object)
+    return member.findByIdAndUpdate(id,object,{new:true})
 }
 
 const createMany = (objects) => {

@@ -17,10 +17,15 @@ const create = async (object) => {
     return data
 }
 
+const update = async (id,object) => {
+    const {data} = await axios.put(`${MEMBERS_URL}/${id}`, object)
+    return data
+}
+
 const remove = async (id) => {
     const {data} = await axios.delete(`${MEMBERS_URL}/${id}`)
     return data
 }
 
 
-module.exports = {getById, getAll, create, remove}
+module.exports = {getById, getAll, create, update, remove}

@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { createSelector } from "reselect";
+import restUtil from '../utils/restUtil'
 
 //TODO: split redux store to slices
 var initialState = {
@@ -22,6 +23,8 @@ export const rootReducer = (state = initialState, action) => {
           return {...state, status: 'idle', movies: action.payload}
         case 'FETCH_DATA_ERROR':
             return { ...state, error: action.payload, status: 'idle' };
+        case 'RESET_DATA_ERROR':
+          return { ...state, error: null, status: 'idle' };
         case 'MOVIE_CREATED':
             return { ...state, movies: [...state.movies, action.payload]};
         case 'MOVIE_UPDATED':
@@ -59,7 +62,7 @@ export const rootReducer = (state = initialState, action) => {
         case 'MEMBER_UPDATED':
           const members = [...state.members];
           const memberIndex = state.members.findIndex(member => { return member._id == action.payload._id });
-          movies[memberIndex] = action.payload
+          members[memberIndex] = action.payload
           return {...state, members: members} 
         case 'MEMBER_DELETED':
           return {...state, members: state.members.filter(member => member._id !== action.payload)};
@@ -80,8 +83,6 @@ export const rootReducer = (state = initialState, action) => {
             return state;
     }
 }
-
-const CINEMA_BASE_URL = 'http://localhost:3001'
 
 //#region Action Creators
 export const moviesLoaded = (payload) => ({ type: 'MOVIES_LOADED', payload: payload })
@@ -109,21 +110,12 @@ export const subscriptionCreated = (subscription) => ({ type: 'SUB_CREATED', pay
 export const subscriptionDeleted = (id) => ({ type: 'SUB_DELETED', payload: id })
 //#endregion
 
-//#region Auth
-//TODO:consider making a wrapper around web requests to make the calls look simpler and handle emitted errors in central location - hopefully easier
-const getHeaders = () => {
-  const accessToken = sessionStorage['Authorization']
-  const headers = {'x-access-token': "Bearer " + accessToken}
-  return headers
-}
-//#endregion
-
 //#region Thunk Functions
 // 'Delete Subscriptions',
 export function subscriptionDelete(id) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.delete(CINEMA_BASE_URL + '/subscriptions/' + id)
+      const {data} = await restUtil.getById('subscriptions',id)
       dispatch(subscriptionDeleted(data._id))
     }
     catch(error){
@@ -138,7 +130,7 @@ export function subscriptionDelete(id) {
 export function subscriptionCreate(subscription) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.post(CINEMA_BASE_URL + '/subscriptions/',subscription)
+      const {data} = await restUtil.createItem('subscriptions',subscription)
       dispatch(subscriptionCreated(data))
     }
     catch(error){
@@ -155,7 +147,7 @@ export async function fetchSubscriptions(dispatch, getState) {
     dispatch(subscriptionsLoading())
     const stateBefore = getState()
     console.log('Subscriptions before dispatch: ', stateBefore.subscriptions.length)
-    const {data} = await axios.get(CINEMA_BASE_URL + '/subscriptions', {headers: getHeaders()})
+    const {data} = await restUtil.getAll('subscriptions')
     dispatch(subscriptionsLoaded(data))
     const stateAfter = getState()
     console.log('Subscriptions after dispatch: ', stateAfter.subscriptions.length)
@@ -171,7 +163,7 @@ export async function fetchSubscriptions(dispatch, getState) {
 export function movieDelete(id) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.delete(CINEMA_BASE_URL + '/movies/' + id)
+      const {data} = await restUtil.deleteItem('movies',id)
       dispatch(movieDeleted(data._id))
       // NOTE: refresh all subscriptions after movie was deleted (so the 'movies.movie' virtual property will not be populated by mongoose for the deleted movie)
       dispatch(fetchSubscriptions)
@@ -188,7 +180,7 @@ export function movieDelete(id) {
 export function movieCreate(movie) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.post(CINEMA_BASE_URL + '/movies/',movie)
+      const {data} = await restUtil.createItem('movies',movie)
       dispatch(movieCreated(data))
     }
     catch(error){
@@ -203,7 +195,7 @@ export function movieCreate(movie) {
 export function movieUpdate(id, movie) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.put(CINEMA_BASE_URL + '/movies/' + id, movie)
+      const {data} = await restUtil.updateItem('movies' ,id , movie)
       dispatch(movieUpdated(data))
     }
     catch(error){
@@ -220,7 +212,7 @@ export async function fetchMovies(dispatch, getState) {
     dispatch(moviesLoading())
     const stateBefore = getState()
     console.log('Movies before dispatch: ', stateBefore.movies.length)
-    const {data} = await axios.get(CINEMA_BASE_URL + '/movies', {headers: getHeaders()})
+    const {data} = await restUtil.getAll('movies')
     dispatch(moviesLoaded(data))
     const stateAfter = getState()
     console.log('Movies after dispatch: ', stateAfter.movies.length)
@@ -237,7 +229,7 @@ export function memberDelete(id) {
   return async (dispatch, getState) => {
     try{
       // NOTE: deletes member, and subscription object if one exists
-      const {data} = await axios.delete(CINEMA_BASE_URL + '/members/' + id)
+      const {data} = await restUtil.deleteItem('members',id)
       dispatch(memberDeleted(data.member._id))
       dispatch(subscriptionDeleted(data.subscription?._id))
     }
@@ -253,7 +245,7 @@ export function memberDelete(id) {
 export function memberCreate(member) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.post(CINEMA_BASE_URL + '/members/',member)
+      const {data} = await restUtil.createItem('members',member)
       dispatch(memberCreated(data))
     }
     catch(error){
@@ -268,7 +260,7 @@ export function memberCreate(member) {
 export function memberUpdate(id, member) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.put(CINEMA_BASE_URL + '/members/' + id, member)
+      const {data} = await restUtil.updateItem('members',id, member)
       dispatch(memberUpdated(data))
     }
     catch(error){
@@ -285,7 +277,7 @@ export async function fetchMembers(dispatch, getState) {
     dispatch(membersLoading())
     const stateBefore = getState()
     console.log('Members before dispatch: ', stateBefore.members.length)
-    const {data} = await axios.get(CINEMA_BASE_URL + '/members', {headers: getHeaders()})
+    const {data} = await restUtil.getAll('members')
     dispatch(membersLoaded(data))
     const stateAfter = getState()
     console.log('Members after dispatch: ', stateAfter.members.length)
@@ -301,7 +293,7 @@ export async function fetchMembers(dispatch, getState) {
 export function userDelete(id) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.delete(CINEMA_BASE_URL + '/users/' + id)
+      const {data} = await restUtil.deleteItem('users',id)
       dispatch(userDeleted(data._id))
     }
     catch(error){
@@ -316,7 +308,7 @@ export function userDelete(id) {
 export function userCreate(user) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.post(CINEMA_BASE_URL + '/users/',user)
+      const {data} = await restUtil.createItem('users',user)
       dispatch(userCreated(data))
     }
     catch(error){
@@ -331,7 +323,7 @@ export function userCreate(user) {
 export function userUpdate(id, user) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await axios.put(CINEMA_BASE_URL + '/users/' + id, user)
+      const {data} = await restUtil.updateItem('users', id, user)
       dispatch(userUpdated(data))
     }
     catch(error){
@@ -348,7 +340,7 @@ export async function fetchUsers(dispatch, getState) {
     dispatch(usersLoading())
     const stateBefore = getState()
     console.log('Users before dispatch: ', stateBefore.users.length)
-    const {data} = await axios.get(CINEMA_BASE_URL + '/users', {headers: getHeaders()})
+    const {data} = await restUtil.getAll('users')
     dispatch(usersLoaded(data))
     const stateAfter = getState()
     console.log('Users after dispatch: ', stateAfter.users.length)
