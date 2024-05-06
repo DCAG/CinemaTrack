@@ -16,8 +16,10 @@ function LoginPage() {
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [formError, setFormError] = useState('')
     
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+      e.preventDefault()
       const loginData = {
           username: username,
           password: password
@@ -25,7 +27,6 @@ function LoginPage() {
 
       try {
         const {data} = await axios.post(LOGIN_URL, loginData)
-        console.log("login successful.",data)
         loginUser(data.accessToken, data.user.username, data.user.firstName, JSON.stringify(data.user.permissions))
         dispatch(fetchMovies)
         dispatch(fetchMembers)
@@ -34,20 +35,33 @@ function LoginPage() {
         
         navigate('/main')
       }catch(error){
-        console.log(error)
-        alert(error.response?.data??error)
+        console.error(error)
+        setFormError(error.response?.data?.message??error)
       }
     }
 
     return (
-    <div>
+    <div className='center'>
         <h1>
-            LoginPage
+            Login
         </h1>
-        Username: <input type="text" name="username" value={username} onChange={e=>setUsername(e.target.value)} /> <br />
-        Password: <input type="password" name="password" value={password} onChange={e=>setPassword(e.target.value)} /> <br />
-        <button onClick={handleLogin}>Login</button> <br />
-        New User? <Link to="/createaccount">Create Account</Link>
+        <form onSubmit={handleLogin} className='login-form'>
+          <div className='txt_field'>
+            <input type="text" name="username" value={username} onChange={e=>setUsername(e.target.value)} placeholder='Username:' required/> <br />
+            <span></span>
+          </div>
+          <div className='txt_field'>
+            <input type="password" name="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder='Password:' required/> <br />
+            <span></span>
+          </div>
+          <input type='submit' value="Login"/> <br />
+          <div className="signup_link">
+            New User? <Link to="/createaccount">Create Account</Link>
+          </div>
+          <div className='form-error'>
+            {formError}
+          </div>
+        </form>
     </div>
     )
 }

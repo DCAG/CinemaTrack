@@ -7,15 +7,15 @@ const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const hasAccess = sessionStorage['Authorization']
+    const hasAccess = sessionStorage['accessToken']
 
     if (hasAccess) {
       setIsAuthenticated(true);
     }
   }, [])
 
-  const loginUser = (token, username, firstName, permissions) => {
-    sessionStorage['Authorization'] = token
+  const loginUser = (accessToken, username, firstName, permissions) => {
+    sessionStorage['accessToken'] = accessToken
     sessionStorage['username'] = username
     sessionStorage['firstName'] = firstName
     sessionStorage['permissions'] = permissions

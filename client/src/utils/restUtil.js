@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const getHeaders = () => {
-  const accessToken = sessionStorage['Authorization']
-  const headers = {'x-access-token': "Bearer " + accessToken}
+  const accessToken = sessionStorage['accessToken']
+  const headers = {'authorization': "Bearer " + accessToken}
   return headers
 }
   
