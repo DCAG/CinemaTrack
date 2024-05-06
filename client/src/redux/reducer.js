@@ -1,10 +1,7 @@
-//import {v4 as uuidv4} from 'uuid'
-
-import axios from "axios";
 import { createSelector } from "reselect";
 import restUtil from '../utils/restUtil'
 
-//TODO: split redux store to slices
+//FUTURE: split redux store to slices
 var initialState = {
     movies: [],
     members: [],
@@ -38,9 +35,10 @@ export const rootReducer = (state = initialState, action) => {
           return {...state, status: 'loading'}
         case 'SUB_LOADED':
           return {...state, status: 'idle', subscriptions: action.payload}
+        case 'SUB_UPDATED':
         case 'SUB_CREATED':
           // NOTE: called whether a new subscription object is created or one is updated - because of how it is structured.
-          // Sending: {movie,date,member} and getting {member,movies:[{movie,date}]}
+          // Sending: {movie,date,member} and receiving {member,movies:[{movie,date}]}
           const subscriptions = [...state.subscriptions];
           const subsIndex = state.subscriptions.findIndex(sub => { return sub._id == action.payload._id });
           if(subsIndex == -1){
@@ -109,6 +107,7 @@ export const userDeleted = (id) => ({ type: 'USER_DELETED', payload: id })
 export const subscriptionsLoaded = (payload) => ({ type: 'SUB_LOADED', payload: payload })
 export const subscriptionsLoading = () => ({ type: 'SUB_LOADING' })
 export const subscriptionCreated = (subscription) => ({ type: 'SUB_CREATED', payload: subscription })
+export const subscriptionUpdated = (subscription) => ({ type: 'SUB_UPDATED', payload: subscription })
 export const subscriptionDeleted = (id) => ({ type: 'SUB_DELETED', payload: id })
 //#endregion
 
@@ -130,8 +129,12 @@ export function subscriptionDelete(id) {
 export function subscriptionCreate(subscription) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await restUtil.createItem('subscriptions',subscription)
-      dispatch(subscriptionCreated(data))
+      const {data: subscriptionData} = await restUtil.createItem('subscriptions',subscription)
+      dispatch(subscriptionCreated(subscriptionData))
+      //NOTE: movie needs to be updated as well.
+      // the subscribers list of that movie is populated in the movie object on retrieval from the db.
+      const {data: movieData} = await restUtil.getById('movies',subscription.movie)
+      dispatch(movieUpdated(movieData))
     }
     catch(error){
       handleErrors(dispatch,getState,error)
@@ -141,6 +144,9 @@ export function subscriptionCreate(subscription) {
 
 // 'View Subscriptions',
 export async function fetchSubscriptions(dispatch, getState) {
+  if(sessionStorage['username']!='admin' && !sessionStorage['permissions']?.includes('View Subscriptions')){
+    return
+  }
   try{
     dispatch(subscriptionsLoading())
     const stateBefore = getState()
@@ -162,7 +168,15 @@ export function movieDelete(id) {
       const {data} = await restUtil.deleteItem('movies',id)
       dispatch(movieDeleted(data._id))
       // NOTE: refresh all subscriptions after movie was deleted (so the 'movies.movie' virtual property will not be populated by mongoose for the deleted movie)
-      dispatch(fetchSubscriptions)
+      // MoviesWatchedComponent is using subscription object to present movies the member is subscribed to. hence needs to be updated as well.
+      const subsResponses = await Promise.all(
+        data.subscriptions.map(async (sub) => 
+          await restUtil.getById('subscriptions', sub._id)
+        )
+      )
+      subsResponses.forEach(response=>{
+        dispatch(subscriptionUpdated(response.data))
+      })
     }
     catch(error){
       handleErrors(dispatch,getState,error)
@@ -189,6 +203,15 @@ export function movieUpdate(id, movie) {
     try{
       const {data} = await restUtil.updateItem('movies' ,id , movie)
       dispatch(movieUpdated(data))
+      // MoviesWatchedComponent is using subscription object to present movies the member is subscribed to. hence needs to be updated as well.
+      const subsResponses = await Promise.all(
+        data.subscriptions.map(async (sub) => 
+          await restUtil.getById('subscriptions', sub._id)
+        )
+      )
+      subsResponses.forEach(response=>{
+        dispatch(subscriptionUpdated(response.data))
+      })
     }
     catch(error){
       handleErrors(dispatch,getState,error)
@@ -198,6 +221,9 @@ export function movieUpdate(id, movie) {
 
 // 'View Movies',
 export async function fetchMovies(dispatch, getState) {
+  if(sessionStorage['username']!='admin' && !sessionStorage['permissions']?.includes('View Movies')){
+    return
+  }
   try{
     dispatch(moviesLoading())
     const stateBefore = getState()
@@ -220,6 +246,16 @@ export function memberDelete(id) {
       const {data} = await restUtil.deleteItem('members',id)
       dispatch(memberDeleted(data.member._id))
       dispatch(subscriptionDeleted(data.subscription?._id))
+      //NOTE: update subscribed movies objects to present up-to-date members
+      const moviesResponses = await Promise.all(
+        // here 'subscriptions.movies' is an array of watched movies: [{name, _id, date}] as populated by the db
+        data.subscription.movies.map(async sub => 
+          {return await restUtil.getById('movies',sub.movie._id)}
+        )
+      )
+      moviesResponses.forEach(response => {
+        dispatch(movieUpdated(response.data))
+      });
     }
     catch(error){
       handleErrors(dispatch,getState,error)
@@ -244,8 +280,18 @@ export function memberCreate(member) {
 export function memberUpdate(id, member) {
   return async (dispatch, getState) => {
     try{
-      const {data} = await restUtil.updateItem('members',id, member)
-      dispatch(memberUpdated(data))
+      const {data:memberData} = await restUtil.updateItem('members',id, member)
+      dispatch(memberUpdated(memberData))
+      //NOTE: update subscribed movies objects to present up-to-date members
+      const moviesResponses = await Promise.all(
+        // here 'subscriptions.movies' is an array of watched movies: [{name, _id, date}] as populated by the db
+        memberData.subscriptions.movies.map(async sub => 
+          {return await restUtil.getById('movies',sub.movie._id)}
+        )
+      )
+      moviesResponses.forEach(response => {
+        dispatch(movieUpdated(response.data))
+      });
     }
     catch(error){
       handleErrors(dispatch,getState,error)
@@ -255,6 +301,9 @@ export function memberUpdate(id, member) {
 
 // 'View Subscriptions',
 export async function fetchMembers(dispatch, getState) {
+  if(sessionStorage['username']!='admin' && !sessionStorage['permissions']?.includes('View Subscriptions')){
+    return
+  }
   try{
     dispatch(membersLoading())
     const stateBefore = getState()
@@ -310,6 +359,9 @@ export function userUpdate(id, user) {
 
 // Admin Only
 export async function fetchUsers(dispatch, getState) {
+  if(sessionStorage['username']!='admin' && !sessionStorage['permissions']?.includes('View Users')){
+    return
+  }
   try{
     dispatch(usersLoading())
     const stateBefore = getState()
@@ -324,11 +376,11 @@ export async function fetchUsers(dispatch, getState) {
   }
 }
 
-const handleErrors = (dispatch, getState, error, callerName = '') => {
+const handleErrors = (dispatch, getState, error) => {
   const errorData = error?.response?.data??error
   dispatch(fetchDataError(errorData))
   const stateAfterError = getState()
-  console.log(stateAfterError.error) //DELETEME:`[${callerName}] error: `, 
+  console.log(stateAfterError.error) 
 }
 //#endregion
 
