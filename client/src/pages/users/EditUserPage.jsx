@@ -10,7 +10,6 @@ import {
 
 function EditUserPage() {
     const {id: userId} = useParams()
-    // TODO: check if selector can be simpler and the page without useEffect now with new redux implementations
     const storeUser = useSelector(store => store.users.find(user => user._id === userId))
     const dispatch = useDispatch()
     const navigate = useNavigate()

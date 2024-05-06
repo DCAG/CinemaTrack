@@ -19,6 +19,9 @@ import AllUsersPage from './pages/users/AllUsersPage'
 function App() {
   return (
     <>
+      <h1>
+        CinemaTrack - Movies Subscriptions Website
+      </h1>
       <Routes>
         <Route path='/' element={<LoginPage />} />
         <Route path='/createaccount' element={<CreateAccountPage />} />

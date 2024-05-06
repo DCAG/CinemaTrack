@@ -40,7 +40,7 @@ const verifyPermissions = (baseUrl, method, userPermissions) => {
     const permissionsRequired = permissionsMatrix[baseUrl][method]
     permissionsRequired.forEach(requiredPermission => {
         if(!userPermissions.includes(requiredPermission)){
-            throw errorMessages.createPermissionAccessError(requiredPermission)
+            throw errorMessages.RESTRICTED_PAGE_ACCESS_MISSING_PERMISSION(requiredPermission)
         } 
     });
     return true

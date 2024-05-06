@@ -6,9 +6,7 @@ import { hasPermission } from '../../utils/permissions'
 
 function MoviesWatchedComponent({memberId}) {
   const mySubscriptionsObj = useSelector(store => store.subscriptions.find(sub=>sub.member?._id==memberId))
-  /**
-   * NOTE: checking if subscription.movies.movie is populated (e.g. in case the movie was deleted and the subscription was not updated with the changes)
-   */
+  //NOTE: checking if subscription.movies.movie is populated (e.g. in case the movie was deleted and the subscription was not updated with the changes)
   const subscriptions = mySubscriptionsObj?.movies.filter(m=>m.movie?._id)??[] 
   const [showDialog, setShowDialog] = useState(false)
   const handleSubscribe = () => {
