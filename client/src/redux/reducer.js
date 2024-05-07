@@ -85,9 +85,11 @@ export const rootReducer = (state = initialState, action) => {
 }
 
 //#region Action Creators
+export const fetchDataError = (error) => ({ type: 'FETCH_DATA_ERROR', payload: error })
+export const resetDataError = () => ({ type: 'RESET_DATA_ERROR' })
+
 export const moviesLoaded = (payload) => ({ type: 'MOVIES_LOADED', payload: payload })
 export const moviesLoading = () => ({ type: 'MOVIES_LOADING' })
-export const fetchDataError = (error) => ({ type: 'FETCH_DATA_ERROR', payload: error })
 export const movieUpdated = (movie) => ({ type: 'MOVIE_UPDATED', payload: movie })
 export const movieCreated = (movie) => ({ type: 'MOVIE_CREATED', payload: movie })
 export const movieDeleted = (id) => ({ type: 'MOVIE_DELETED', payload: id })
