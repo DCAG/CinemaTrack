@@ -62,7 +62,7 @@ const getById = async (id) => {
     const userId = creds._id.toString()
   
     return { 
-        _id: userId,
+        _id: userId, 
         permissions: userPermissions.permissions,
         firstName: userData.firstName,
         lastName: userData.lastName,
@@ -108,11 +108,11 @@ const create = async (object) => {
     console.log(object)
     const data = await usersCollRepo.create(object)
     const permissionsFileObj = {
-        userId: data._id,
+        userId: data._id.toString(), 
         permissions: object.permissions
     }
     const usersFileObj = {
-        id: data._id,
+        id: data._id.toString(),
         firstName: object.firstName,
         lastName: object.lastName,
         createdDate: (new Date()).toISOString().replace(/T.*Z$/,''),
@@ -121,7 +121,7 @@ const create = async (object) => {
     }
     const result = await Promise.all([
         permissionsFileRepo.create(permissionsFileObj),
-        usersFileRepo.create(usersFileObj)
+        usersFileRepo.create(usersFileObj) 
     ])
     console.log(result)
     const createdUser = await getById(data._id.toString())

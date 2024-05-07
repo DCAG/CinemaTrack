@@ -16,4 +16,4 @@
    - `node index.js`
 
 On the first time the server will create the 'admin' user. Its password will be printed in the terminal. later it can be retrieved from the DB (just for demonstration purposes... for realworld usage this behaviour should be changed).
-Inside the `auth/` folder 2 files will be created: `permissions.json` and `users.json`
+2 files will be created: `permissions.json` and `users.json`

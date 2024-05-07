@@ -1,7 +1,7 @@
 const jsonfile = require('jsonfile')
 const errorMessages = require('../utils/errorMessages')
 
-const USERS_FILE = './auth/users.json'
+const USERS_FILE = './users.json'
 
 const getAll = async () => {
   try {
@@ -25,7 +25,7 @@ const getById = async (id) => {
   }
   catch (error) {
     if (error.code == 'ENOENT' & error.errno == -4058) {
-      return null
+      return null 
     }
     else {
       throw error
@@ -54,13 +54,13 @@ const create = async (object) => {
   }
   try {
     const data = await jsonfile.readFile(USERS_FILE)
-    jsonfile.writeFile(USERS_FILE, [...data, object])
+    await jsonfile.writeFile(USERS_FILE, [...data, object])
     return object
   }
   catch (error) {
     if (error.code == 'ENOENT' & error.errno == -4058) {
       // if the file doesn't exist - just write to it
-      jsonfile.writeFile(USERS_FILE, [...[],object])
+      await jsonfile.writeFile(USERS_FILE, [...[],object])
       return object
     }
     else {
