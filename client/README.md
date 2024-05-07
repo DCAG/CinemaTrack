@@ -1,5 +1,7 @@
 # CinemaTrack - React Client for Movies Subscriptions Management System
 
+![client-movie-search](../images/client-movie-search.jpg)
+
 ## How To Setup
 
 1. Clone the repo
