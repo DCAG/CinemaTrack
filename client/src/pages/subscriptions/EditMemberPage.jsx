@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { memberUpdate } from '../../redux/reducer'
 
@@ -8,9 +8,9 @@ function EditMemberPage() {
     const storeMember = useSelector(store => store.members.find(member => member._id===id))
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const [member, setMember] = useState(storeMember??{name:'', email:'', city:''})
+    const [member, setMember] = useState({name:'', email:'', city:''})
     useEffect(() => {
-      setMember(storeMember??{name:'', email:'', city:''})
+      setMember(previous => storeMember??previous)
     },[storeMember])
     const handleChange = (e) => {
         let name = e.target.name
@@ -18,7 +18,7 @@ function EditMemberPage() {
         setMember(previous => { return {...previous, [name]: value}})
     }
     const handleUpdate = () => {
-        dispatch(memberUpdate(member))
+        dispatch(memberUpdate(id, member))
         navigate('../')
     }
     const handleCancel = () => {

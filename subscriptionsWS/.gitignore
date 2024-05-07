@@ -1,3 +1,6 @@
+auth/permissions.json
+auth/users.json
+
 # Logs
 *.flag.txt
 logs

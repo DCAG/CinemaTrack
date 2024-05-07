@@ -20,7 +20,7 @@ memberSchema.virtual('subscriptions', {
   justOne : true
 });
 
-memberSchema.pre('find', function(next) {
+memberSchema.pre(/^find/, function(next) {
   if (this.options._recursed) {
     return next();
   }

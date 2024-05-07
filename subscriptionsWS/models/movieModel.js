@@ -21,7 +21,7 @@ movieSchema.virtual('subscriptions', {
   //justOne : true
 });
   
-movieSchema.pre('find', function(next) {
+movieSchema.pre(/^find/, function(next) {
   if (this.options._recursed) {
     return next();
   }
@@ -30,7 +30,7 @@ movieSchema.pre('find', function(next) {
     options: { _recursed: true },
     transform: (doc, id) => {
       if(doc==null){
-        return null //CHECK: or maybe return {_id:id}?
+        return null
       }
 
       return {

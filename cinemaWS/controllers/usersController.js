@@ -16,7 +16,6 @@ router.get('/', async (req,res) => {
 
 router.get('/:id', async (req,res) => {
     try{
-
         const {id} = req.params
         const result = await usersService.getById(id)
         res.send(result)
@@ -40,26 +39,6 @@ router.post('/', async (req,res) => {
             statusCode = 422
         }
         res.status(statusCode).send(err)
-    }
-})
-
-router.post('/createaccount', async (req,res) => {
-    try{
-        const body = req.body;
-        const result = await usersService.createaccount(body)
-        res.status(201).send(result)
-    }
-    catch(err){
-        console.log(err)
-        switch(err.name){
-            case 'USER_PASS_EMPTY':
-            case 'USER_NOT_EXIST':
-                res.status(err.statusCode).send(err.message)
-                break;
-            default: 
-                res.status(404).send(err)
-                break;
-        }
     }
 })
 

@@ -1,4 +1,5 @@
 const jsonfile = require('jsonfile')
+const errorMessages = require('../utils/errorMessages')
 
 const PERMISSIONS_FILE = './auth/permissions.json'
 const VALID_PERMISSIONS = [
@@ -15,10 +16,7 @@ const VALID_PERMISSIONS = [
 const isValidPermissionsList = (arr) => {
     arr.forEach(element => {
         if(!VALID_PERMISSIONS.includes(element)){
-            throw {
-                message: `permission [${element}] is invalid`,
-                target: arr
-            }
+            throw errorMessages.INVALID_PERMISSION(element,arr)
         }
     })
     return true
@@ -30,30 +28,39 @@ const getAll = async () => {
 }
 
 const getById = async (id) => {
-    const data = await jsonfile.readFile(PERMISSIONS_FILE)
-    return data.find(item => item.userId === id)
+    try{
+        const data = await jsonfile.readFile(PERMISSIONS_FILE)??[]
+        return data.find(item => item.userId === id)
+    }
+    catch(err){
+        if(err.code == 'ENOENT' & err.errno == -4058){
+            return null
+        } 
+        else{ 
+            throw err
+        }
+    }
 }
 
 const create = async (object) => {
     if(!(object.permissions && object.userId)){
-        throw {
-            message: "one of the fields is missing: userId, permissions",
-            target: object
-        }
+        throw errorMessages.USER_CREATION_FAILED_MISSING_PERMISSION_FIELDS(object)
     }
     try{
         // assertion only
         object.permissions && !isValidPermissionsList(object.permissions)
-        const data = await jsonfile.readFile(PERMISSIONS_FILE)
-        // TODO: check if "username" and "id" are unique, if not throw an error
+        const data = await jsonfile.readFile(PERMISSIONS_FILE)??[]
         jsonfile.writeFile(PERMISSIONS_FILE,[...data, object])
         return object
     }
     catch(error){
-        throw {
-            message: 'failed to create permissions object',
-            target: object,
-            innerError: error
+        if(error.code == 'ENOENT' & error.errno == -4058){
+            // if the file doesn't exist - just write to it
+            jsonfile.writeFile(PERMISSIONS_FILE,[...[],object])
+            return object
+        }
+        else{
+            throw errorMessages.USER_CREATION_FAILED_PERMISSION_OBJECT(object, error)
         }
     }
 }
@@ -64,34 +71,24 @@ const update = async (id, object) => {
         object.permissions && !isValidPermissionsList(object.permissions)
         const data = await jsonfile.readFile(PERMISSIONS_FILE)
         const index = data.findIndex(item => item.userId === id)
-        // thinking: there is an option this way to update the id inside the object... might want to prevent that (or not)
         data[index] = {...data[index],...object}
-        // TODO: check if "username" and "id" are unique, if not throw an error
         jsonfile.writeFile(PERMISSIONS_FILE,data)
         return data[index]
     }
     catch(error){
-        throw {
-            message: 'failed to update permissions object',
-            target: [id, object],
-            innerError: error
-        }
+        throw errorMessages.USER_UPDATE_FAILED_PERMISSION_OBJECT(id, object, error)
     }
 }
 
 const remove = async (id) => {
     try{
         const data = await jsonfile.readFile(PERMISSIONS_FILE)
-        const newData = data.filter(item => item.userId === id)
+        const newData = data.filter(item => item.userId !== id)
         jsonfile.writeFile(PERMISSIONS_FILE,newData)
         return `${id} was deleted`
     }
     catch(error){
-        throw {
-            message: 'failed to remove permissions object',
-            target: id,
-            innerError: error
-        }
+        throw errorMessages.USER_REMOVAL_FAILED_PERMISSION_OBJECT(id,error)
     }
 }
 

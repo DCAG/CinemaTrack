@@ -1,5 +1,6 @@
 import React from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
+import { hasPermission } from '../../utils/permissions'
 
 function SubscriptionsPage() {
     const location = useLocation()
@@ -13,7 +14,9 @@ function SubscriptionsPage() {
             <li className={location.pathname.match(/subscriptions\/*$/)?'selected-link':''}>
               <Link to='.'>All Members</Link>
             </li>
-            <li className={location.pathname.match(/subscriptions\/add\/*$/)?'selected-link':''}>
+            <li className={location.pathname.match(/subscriptions\/add\/*$/)?'selected-link':''}
+              style={!hasPermission('Create Subscriptions')?{display:'none'}:{}}
+            >
               <Link to='add'>Add Member</Link>
             </li>
           </ul>

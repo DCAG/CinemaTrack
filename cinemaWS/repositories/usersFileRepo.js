@@ -1,77 +1,97 @@
 const jsonfile = require('jsonfile')
+const errorMessages = require('../utils/errorMessages')
 
 const USERS_FILE = './auth/users.json'
 
 const getAll = async () => {
-    const data = await jsonfile.readFile(USERS_FILE)
+  try {
+    const data = await jsonfile.readFile(USERS_FILE)??[]
     return data
+  }
+  catch (err) {
+    if (err.code == 'ENOENT' & err.errno == -4058) {
+      return null
+    }
+    else {
+      throw err
+    }
+  }
 }
 
 const getById = async (id) => {
-    const data = await jsonfile.readFile(USERS_FILE)
+  try {
+    const data = await jsonfile.readFile(USERS_FILE)??[]
     return data.find(item => item.id === id)
+  }
+  catch (error) {
+    if (error.code == 'ENOENT' & error.errno == -4058) {
+      return null
+    }
+    else {
+      throw error
+    }
+  }
 }
 
 const getByUsername = async (username) => {
+  try{
     const data = await jsonfile.readFile(USERS_FILE)
     return data.find(item => item.username === username)
+  }
+  catch (error) {
+    if (error.code == 'ENOENT' & error.errno == -4058) {
+      return null
+    }
+    else {
+      throw error
+    }
+  }
 }
 
 const create = async (object) => {
-    if(!(object.id && object.createdDate && object.firstName && object.lastName && object.username && object.sessionTimeout)){
-        throw {
-            message: "one of the fields is missing: id, createdDate, firstName, lastName, username, sessionTimeout",
-            target: object
-        }
+  if (!(object.id && object.createdDate && object.firstName && object.lastName && object.username && object.sessionTimeout)) {
+    throw errorMessages.USER_CREATION_FAILED_MISSING_FIELDS(object)
+  }
+  try {
+    const data = await jsonfile.readFile(USERS_FILE)
+    jsonfile.writeFile(USERS_FILE, [...data, object])
+    return object
+  }
+  catch (error) {
+    if (error.code == 'ENOENT' & error.errno == -4058) {
+      // if the file doesn't exist - just write to it
+      jsonfile.writeFile(USERS_FILE, [...[],object])
+      return object
     }
-    try{
-        const data = await jsonfile.readFile(USERS_FILE)
-        // TODO: check if "username" and "id" are unique, if not throw an error
-        jsonfile.writeFile(USERS_FILE,[...data, object])
-        return object
+    else {
+      throw errorMessages.USER_CREATION_FAILED(object, error)
     }
-    catch(error){
-        throw {
-            message: 'failed to create user',
-            target: object,
-            innerError: error
-        }
-    }
+  }
 }
 
 const update = async (id, object) => {
-    try{
-        const data = await jsonfile.readFile(USERS_FILE)
-        const index = data.findIndex(item => item.id === id)
-        // thinking: there is an option this way to update the id inside the object... might want to prevent that (or not)
-        data[index] = {...data[index],...object}
-        // TODO: check if "username" and "id" are unique, if not throw an error
-        jsonfile.writeFile(USERS_FILE,data)
-        return data[index]
-    }
-    catch(error){
-        throw {
-            message: 'failed to update user',
-            target: [id, object],
-            innerError: error
-        }
-    }
+  try {
+    const data = await jsonfile.readFile(USERS_FILE)
+    const index = data.findIndex(item => item.id === id)
+    data[index] = { ...data[index], ...object }
+    jsonfile.writeFile(USERS_FILE, data)
+    return data[index]
+  }
+  catch (error) {
+    throw errorMessages.USER_UPDATE_FAILED(id,object,error)
+  }
 }
 
 const remove = async (id) => {
-    try{
-        const data = await jsonfile.readFile(USERS_FILE)
-        const newData = data.filter(item => item.id === id)
-        jsonfile.writeFile(USERS_FILE,newData)
-        return `${id} was deleted`
-    }
-    catch(error){
-        throw {
-            message: 'failed to remove user',
-            target: id,
-            innerError: error
-        }
-    }
+  try {
+    const data = await jsonfile.readFile(USERS_FILE)
+    const newData = data.filter(item => item.id !== id)
+    jsonfile.writeFile(USERS_FILE, newData)
+    return `${id} was deleted`
+  }
+  catch (error) {
+    throw errorMessages.USER_REMOVAL_FAILED(id,error)
+  }
 }
 
-module.exports = {getAll, getById, getByUsername, create, update, remove}
+module.exports = { getAll, getById, getByUsername, create, update, remove }

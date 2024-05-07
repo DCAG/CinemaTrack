@@ -1,18 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import { useDispatch } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { userCreate } from '../../redux/reducer'
-
-const PERMISSIONS_LIST = [
-    'View Subscriptions',
-    'Create Subscriptions',
-    'Delete Subscriptions',
-    'Update Subscriptions',
-    'View Movies',
-    'Create Movies',
-    'Delete Movies',
-    'Update Movies'
-]
+import {
+    convertPermissionsFromList,
+    convertPermissionsToList,
+    getPermissionDependencies
+} from '../../utils/permissions'
 
 function AddUserPage() {
     const dispatch = useDispatch()
@@ -20,31 +14,15 @@ function AddUserPage() {
     const [user, setUser] = useState({firstName: '', lastName: '', username: '', sessionTimeout: 0, createdDate:'', permissions: [] /* the 'permissions' state is used for user input */})
     const [permissions,setPermissions] = useState({})
 
-    const convertPermissionsFromList = (permissionsList) => {
-        let result = {}
-        PERMISSIONS_LIST.forEach(item => {result[item] = Array.isArray(permissions) && permissionsList.includes(item)})
-        return result
-    }
-    const convertPermissionsToList = (permissionsObject) => {
-        return PERMISSIONS_LIST.filter(permission => permissionsObject[permission])
-    }
-
     useEffect(() => {
         setPermissions(convertPermissionsFromList([]))
     },[])
 
     const handleCheck = (e) => {
-        // TODO: dependency is for viewing purposes. This will be be enforced on the server side as well.
-        let dependency = {}
-        if(['Create Subscriptions','Update Subscriptions','Delete Subscriptions'].includes(e.target.name) && e.target.checked){            
-            dependency = {'View Subscriptions': true}
-        }
-        else if(['Create Movies','Update Movies','Delete Movies'].includes(e.target.name) && e.target.checked ){
-            dependency = {'View Movies': true}
-        }
+        const dependencies = getPermissionDependencies(e.target.name,e.target.checked)
         setPermissions(previous => {return {
             ...previous,
-            ...dependency,
+            ...dependencies,
             [e.target.name]:e.target.checked
         }})
     }

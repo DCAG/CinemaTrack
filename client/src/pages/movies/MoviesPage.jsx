@@ -1,5 +1,6 @@
 import React from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
+import { hasPermission } from '../../utils/permissions'
 
 function MoviesPage() {
     const navigate = useNavigate()
@@ -21,7 +22,9 @@ function MoviesPage() {
                 <li className={location.pathname.match(/movies\/*$/)?'selected-link':''}>
                     <Link to='.'>All Movies</Link>
                 </li>
-                <li className={location.pathname.match(/movies\/add\/*$/)?'selected-link':''}>
+                <li className={location.pathname.match(/movies\/add\/*$/)?'selected-link':''}
+                    style={!hasPermission('Create Movies')?{display:'none'}:{}}
+                >
                     <Link to='add'>Add Movie</Link>
                 </li>
                 <li>

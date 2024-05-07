@@ -2,7 +2,9 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import MoviesWatchedComponent from './MoviesWatchedComponent'
-import { memberDelete, subscriptionDelete } from '../../redux/reducer'
+import { memberDelete } from '../../redux/reducer'
+import { hasPermission } from '../../utils/permissions'
+
 
 function MemberComponent({id}) {
   const member = useSelector(store=>store.members.find(member=>member._id===id))
@@ -24,10 +26,16 @@ function MemberComponent({id}) {
         <a id={id}><h3>{member.name}</h3></a>
         <label>Email:</label> {member.email} <br />
         <label>City:</label> {member.city} <br />
-        <button onClick={handleEdit}>Edit</button>
-        <button onClick={handleDelete}>Delete</button>
+        {
+          hasPermission('Update Subscriptions') ? <button onClick={handleEdit}>Edit</button> : <></>
+        }
+        {
+          hasPermission('Delete Subscriptions') ? <button onClick={handleDelete}>Delete</button> : <></>
+        }
         <br /><br />
-        <MoviesWatchedComponent memberId={id} />
+        {
+          hasPermission('View Movies') ? <MoviesWatchedComponent memberId={id} /> : <></>
+        }
     </div>
   )
 }

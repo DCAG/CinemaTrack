@@ -17,16 +17,6 @@ const create = (object) => {
 }
 
 const remove = (id) => {
-// const remove = async (id) => {
-//     const movie = await movieRepo.getById(id)
-//     const subscriptions = movie.subscriptions.map(sub => sub._id)
-//     const data = await movieRepo.remove(id)
-//     const result = {
-//         movie: data,
-//          // NOTE: update affected subscriptions in client side
-//         subscriptions
-//     }
-//     return result
     return movieRepo.remove(id)
 }
 

@@ -5,11 +5,13 @@ import { movieUpdate } from '../../redux/reducer'
 
 function EditMoviePage() {
     const {id} = useParams()
-    const movieObj = useSelector(store=>store.movies.find(m=>m._id===id),shallowEqual)
-    const defaultObj = {name: '', genres: [], image: '', premiered: ''}
-    const [movie, setMovie] = useState(movieObj??defaultObj)
+    const storeMovie = useSelector(store=>store.movies.find(m=>m._id===id),shallowEqual)
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const [movie, setMovie] = useState({name: '', genres: [], image: '', premiered: ''})
+    useEffect(()=>{
+        setMovie(previous => storeMovie??previous)
+    },[storeMovie])
     
     const handleChange = (e) => {
         let name = e.target.name
@@ -18,16 +20,12 @@ function EditMoviePage() {
     }
     const handleUpdate = () => {
         dispatch(movieUpdate(id,movie))
-        navigate('.')
+        navigate('../')
     }
 
     const handleCancel = () => {
         navigate('../')
     }
-    
-    useEffect(()=>{
-        setMovie(movieObj??defaultObj)
-    },[movieObj])
 
     return (
     <div className='generic-form'>

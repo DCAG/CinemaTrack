@@ -2,54 +2,30 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { userUpdate } from '../../redux/reducer'
-
-const PERMISSIONS_LIST = [
-    'View Subscriptions',
-    'Create Subscriptions',
-    'Delete Subscriptions',
-    'Update Subscriptions',
-    'View Movies',
-    'Create Movies',
-    'Delete Movies',
-    'Update Movies'
-]
+import {
+    convertPermissionsFromList,
+    convertPermissionsToList,
+    getPermissionDependencies
+} from '../../utils/permissions'
 
 function EditUserPage() {
     const {id: userId} = useParams()
-    // TODO: check if selector can be simpler and the page without useEffect now with new redux implementations
-    const users = useSelector(store => store.users)
+    const storeUser = useSelector(store => store.users.find(user => user._id === userId))
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [user, setUser] = useState({firstName: '', lastName: '', username: '', sessionTimeout: 0, createdDate:'', permissions: [] /* the 'permissions' state is used for user input */})
     const [permissions,setPermissions] = useState({})
-    const convertPermissionsFromList = (permissionsList) => {
-        let result = {}
-        PERMISSIONS_LIST.forEach(item => {result[item] = Array.isArray(permissionsList) && permissionsList.includes(item)})
-        return result
-    }
-    const convertPermissionsToList = (permissionsObject) => {
-        return PERMISSIONS_LIST.filter(permission => permissionsObject[permission])
-    }
 
     useEffect(()=>{
-        let tempUser = users.find(user => user._id === userId)
-        setUser(previous => tempUser??previous)
-        setPermissions(convertPermissionsFromList(tempUser?.permissions??{}))
-    },[users])
+        setUser(previous => storeUser??previous)
+        setPermissions(convertPermissionsFromList(storeUser?.permissions??{}))
+    },[storeUser])
 
     const handleCheck = (e) => {
-        //TODO: make sure viewing is mandatory on server side if its a dependency. (READ the requirements again!!! it may not be necessary!)
-        // dependency is for viewing purposes. This will be be enforced on the server side as well.
-        let dependency = {}
-        if(['Create Subscriptions','Update Subscriptions','Delete Subscriptions'].includes(e.target.name) && e.target.checked){            
-            dependency = {'View Subscriptions': true}
-        }
-        else if(['Create Movies','Update Movies','Delete Movies'].includes(e.target.name) && e.target.checked ){
-            dependency = {'View Movies': true}
-        }
+        const dependencies = getPermissionDependencies(e.target.name,e.target.checked)
         setPermissions(previous => {return {
             ...previous,
-            ...dependency,
+            ...dependencies,
             [e.target.name]:e.target.checked
         }})
     }

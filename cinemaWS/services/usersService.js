@@ -1,6 +1,7 @@
 const usersCollRepo = require('../repositories/usersCollRepo')
 const usersFileRepo = require('../repositories/usersFileRepo')
 const permissionsFileRepo = require('../repositories/permissionsFileRepo')
+const errorMessages = require('../utils/errorMessages')
 
 const getAll = async () => {
     const data = await Promise.all([
@@ -27,8 +28,9 @@ const getAll = async () => {
     })
 }
 
-const getByUsername = (username) => {
-    return usersCollRepo.getByUsername(username)
+const getByUsername = async (username) => {
+    const user = await usersCollRepo.getByUsername(username)
+    return await getById(user._id.toString())
 }
 
 const verifyCredentials = async (username, password) => {
@@ -52,10 +54,14 @@ const getById = async (id) => {
     const creds = data[0]
     const userPermissions = data[1]
     const userData = data[2]
-    
-    const userId = creds._id.toString()
+     
+    if(null==creds){
+        return null
+    }
 
-    return {
+    const userId = creds._id.toString()
+  
+    return { 
         _id: userId,
         permissions: userPermissions.permissions,
         firstName: userData.firstName,
@@ -68,29 +74,17 @@ const getById = async (id) => {
 
 const createaccount = async ({username,password}) => {
     if(!password.trim()){
-        throw {
-            message: 'password must not be empty or contain spaces',
-            statusCode: 400,
-            name: 'USER_PASS_EMPTY'
-        }
+        throw errorMessages.USER_PASS_EMPTY
     }
     const creds = await usersCollRepo.getByUsername(username)
     if(!creds){
-        throw {
-            message: 'user does not exist',
-            statusCode: 400,
-            name: 'USER_NOT_EXIST'
-        }
+        throw errorMessages.USER_NOT_EXIST
     }
     if(creds.password){
-        throw {
-            // prevent password change for existing user
-            // security concern: even though the user exist throw the same error as before
-            // prevent giving knowlegde about existance of a user for perpetrator
-            message: 'user does not exist',
-            statusCode: 400,
-            name: 'USER_NOT_EXIST'
-        }
+        // attempt to prevent password change for existing user
+        // security concern: even though the user exist throw the same error as before
+        // prevent giving knowlegde about existance of a user for perpetrator
+        throw errorMessages.USER_NOT_EXIST
     }
     
     await usersCollRepo.update(creds._id,{username, password})
@@ -135,7 +129,14 @@ const create = async (object) => {
 }
 
 const remove = async (id) => {
-    return usersCollRepo.remove(id)
+    const data = await Promise.all([
+        usersCollRepo.remove(id),
+        usersFileRepo.remove(id),
+        permissionsFileRepo.remove(id),
+    ])
+    const returnValue = data[0]??{}
+    delete returnValue.password
+    return returnValue
 }
 
 module.exports = {getAll, getById, create, update, remove, getByUsername, verifyCredentials, createaccount}
