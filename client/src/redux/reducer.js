@@ -251,11 +251,15 @@ export function memberDelete(id) {
       //NOTE: update subscribed movies objects to present up-to-date members
       const moviesResponses = await Promise.all(
         // here 'subscriptions.movies' is an array of watched movies: [{name, _id, date}] as populated by the db
-        data.subscription.movies.map(async sub => 
-          {return await restUtil.getById('movies',sub.movie._id)}
-        )
+        data.subscription.movies.map(async sub => {
+          // checking if movie is not null (not populated). Happens in case it was deleted and then the member was deleted
+          if(sub.movie){
+            return await restUtil.getById('movies',sub.movie._id)
+          }
+          return null
+        })
       )
-      moviesResponses.forEach(response => {
+      moviesResponses.filter(response => response!=null).forEach(response => {
         dispatch(movieUpdated(response.data))
       });
     }
