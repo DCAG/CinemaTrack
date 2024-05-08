@@ -33,9 +33,14 @@ router.post('/', async (req,res) => {
         const data = await movieService.create(body)
         res.status(201).send(data)
     }
-    catch(err){
-        console.log(err)
-        res.send(err)
+    catch(error){
+        console.log(error)
+        if(error.name === 'ValidationError'){
+            res.status(400).send(error)
+        }
+        else{
+            res.status(500).send(error)
+        }
     }
 })
 

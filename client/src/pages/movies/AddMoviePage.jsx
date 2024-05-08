@@ -14,7 +14,8 @@ function AddMoviePage() {
         }
         setMovie(previous => {return {...previous, [name]: value}})
     }
-    const handleSave = () => {
+    const handleSave = (e) => {
+        e.preventDefault()
         dispatch(movieCreate(movie))
         navigate('../')
     }
@@ -23,14 +24,16 @@ function AddMoviePage() {
         navigate('../')
     }
     return (
-    <div className='generic-form'>
-        <label>Name:</label> <input type="text" name="name" onChange={handleChange} /> <br />
-        <label>Genres:</label> <input type="text" name="genres" onChange={handleChange} /> <br />
-        <label>Image URL:</label> <input type="url" name="image" onChange={handleChange} /> <br />
-        <label>Premiered:</label> <input type="date" name="premiered" onChange={handleChange} /> <br />
-        <br />
-        <button onClick={handleSave}>save</button>
-        <button onClick={handleCancel}>cancel</button>
+    <div>
+        <form className='generic-form' onSubmit={handleSave}>
+            <label>Name:</label> <input type="text" name="name" onChange={handleChange} required /> <br />
+            <label>Genres:</label> <input type="text" name="genres" onChange={handleChange} required /> <br />
+            <label>Image URL:</label> <input type="url" name="image" onChange={handleChange} required /> <br />
+            <label>Premiered:</label> <input type="date" name="premiered" onChange={handleChange} required /> <br />
+            <br />
+            <button type='submit'>save</button>
+            <button onClick={handleCancel}>cancel</button>
+        </form>
     </div>
     )
 }
